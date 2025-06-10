@@ -70,7 +70,7 @@ The thinking behind this folder structure is
         ├── data           <- Scripts to download and convert data from pp to NetCDF
         ├── util           <- Scripts for general utilities, e.g. loading data 
         └── visualization  <- Scripts to create exploratory and results oriented visualizations
-     
+
 
 ## Plans
 - Alex has shared his R code base for evaluating UKESM1. It would be extremely helpful to see if the code could be reused for evaluating UKESM1.3 and UKESM2 down the line.
@@ -78,4 +78,10 @@ The thinking behind this folder structure is
 
 ## Other useful resources
 
+
+
 ## Change log
+
+High-leve log. Earliest first.
+
+- 2025-06-10:  Moved all existing scripts to `archive/`. Will slowly look at what is in there.
