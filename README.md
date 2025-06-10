@@ -8,7 +8,7 @@ This is not to enforce a way of work to anyone. Please feel free to do work your
 - There is an example folder for common tasks. It may be a good idea to start there.
 
 ## Table of contents
-- [How is this repo structured?](#how-is-this-repo-structured)
+- [How is this repo structured? Why?](#how-is-this-repo-structured)
 - [Structure of this repo](#folder-organization)
 - How do I do ...? -> Check list of useful tasks in example table of content!
 - [Plans](#plans)
@@ -17,9 +17,9 @@ This is not to enforce a way of work to anyone. Please feel free to do work your
 
 ## How to use this repo?
 
-The structure of this repo is somewhat based on [cookie-cutter datascience](https://cookiecutter-data-science.drivendata.org/) with a lot of tweaks.
+The structure of this repo is somewhat based on [cookie-cutter datascience](https://cookiecutter-data-science.drivendata.org/) with a lot of tweaks to suit working on different HPCs.
 
-The thinking behind this folder structure is
+The useage for each folder and the overall structure is explained below. This is not strict so just add stuff!:
 - Example of tasks are listed in `examples/`. There will be a `README.md` in the folder to provide overview of the example tasks that scripts in this folder cover.
 - All reusable functions live in `src/`
 - Scripts that are somewhat stable and do specific tasks lives in `script/`. 
@@ -73,11 +73,12 @@ The thinking behind this folder structure is
 
 
 ## Plans
-- Alex has shared his R code base for evaluating UKESM1. It would be extremely helpful to see if the code could be reused for evaluating UKESM1.3 and UKESM2 down the line.
-    - Print will create a new github repo for that code and share with the group to start.
+- Alex has shared his [R code base for evaluating UKESM1](https://github.com/Centre-for-Atmospheric-Science-Cam-Chem/ukesm1-eval-R). It would be extremely helpful to see if we could reuse the codes for evaluating UKESM1.3 and UKESM2 down the line.
 
 ## Other useful resources
 
+- A lot more useful and group-specific information in the group wiki.
+- UKCA training
 
 
 ## Change log
