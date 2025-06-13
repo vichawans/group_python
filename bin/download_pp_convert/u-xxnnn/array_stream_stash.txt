@@ -1,0 +1,6 @@
+ArrayTaskID	stream		stash
+1		ap4.pp		38285
+2		ap4.pp		38286
+3		ap4.pp		38288
+4		ap4.pp		38289
+5		ap4.pp		50150
