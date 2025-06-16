@@ -83,6 +83,6 @@ The useage for each folder and the overall structure is explained below. This is
 
 ## Change log
 
-High-leve log. Earliest first.
+High-level log. Earliest first.
 
 - 2025-06-10:  Moved all existing scripts to `archive/`. Will slowly look at what is in there.
