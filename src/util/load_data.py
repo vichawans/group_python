@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Utilities for running notebooks
 
 import os
