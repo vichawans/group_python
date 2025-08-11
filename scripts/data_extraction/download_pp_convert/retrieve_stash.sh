@@ -1,16 +1,14 @@
 #!/bin/bash
 
-# This a driver script to download pp files from the MASS archive that match a given stash number 
+# This a script to download pp files from the MASS archive that match a given stash number 
 # and save to a specified directory. It is designed to be run on mass-cli or from account=mass
 # when submitted from slurm
 # It uses the moo select to filter out relevant stash. 
 # As default, it will try 3 times before exiting.
 
 # This script could be run directly from the command line, or
-# as a batch download job from retrieve_pp_batch.sh, or
-# as part of a larger workflow from convert_pp_to_nc_batch.sh
-
-# Make sure download_dir exists before running this script
+# as a batch download job from batch_retrieve_pp.sh, or
+# as part of a larger workflow from batch_retrieve_and_convert_to_nc.sh
 
 # Edit query_options.txt as appropriate for the data file being downloaded e.g. include year range
 # See https://gws-access.jasmin.ac.uk/public/mohc_shared/moose-user-doc/external_user_guide.html#record-level-retrieval-query-syntax
@@ -27,7 +25,7 @@ jobID=$1 # e.g. u-cu594
 stream=$2 # e.g. ap4.pp
 stash=$3 # e.g. 38285
 download_dir=$4 # e.g. /work/scratch-pw2/vs480/pp_files/$jobID/${jobID}_${stream}_${stash}
-imax=${5:-"3"} # default =3
+imax=${5:-"3"} # default = 3
 queries=${6:-""} # default is empty
 
 # Get absolute path of queries
