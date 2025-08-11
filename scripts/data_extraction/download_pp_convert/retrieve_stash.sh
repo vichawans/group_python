@@ -1,37 +1,36 @@
 #!/bin/bash
 
-# This script download pp files from the JASMIN archive that match a given stash number 
-# and save to a specified directory. It is designed to be run on mass-cli.
+# This a script to download pp files from the MASS archive that match a given stash number 
+# and save to a specified directory. It is designed to be run on mass-cli or from account=mass
+# when submitted from slurm
 # It uses the moo select to filter out relevant stash. 
 # As default, it will try 3 times before exiting.
 
 # This script could be run directly from the command line, or
-# as a batch download job from retrieve_pp_batch.sh, or
-# as part of a larger workflow from convert_pp_to_nc_batch.sh
+# as a batch download job from batch_retrieve_pp.sh, or
+# as part of a larger workflow from batch_retrieve_and_convert_to_nc.sh
 
-# Make sure download_dir exists before running this script
-
-# Edit quer_file.txt as appropriate for the data file being downloaded e.g. include year range
+# Edit query_options.txt as appropriate for the data file being downloaded e.g. include year range
 # See https://gws-access.jasmin.ac.uk/public/mohc_shared/moose-user-doc/external_user_guide.html#record-level-retrieval-query-syntax
-# Example query file:
-# begin
-#   stash=38285
+# Example queries
 #   T1=20180101
 #   T2=20181231
-# end
+# Do not set if downloading full time range
 
 # Edit the try loop (imax) to change the number of attempts if needed.
 
-# Usage: sh retrieve_pp.sh $jobID $stream $stash $pp_filename $download_dir $imax (optional)
+# Usage: sh retrieve_pp.sh $jobID $stream $stash $download_dir $imax (optional) $queries
 
 jobID=$1 # e.g. u-cu594
 stream=$2 # e.g. ap4.pp
 stash=$3 # e.g. 38285
-download_dir=$4 # e.g. /work/scratch-pw2/vs480/pp_files/$jobID/pp_files/${jobID}_${stream}_${stash}
+download_dir=$4 # e.g. /work/scratch-pw2/vs480/pp_files/$jobID/${jobID}_${stream}_${stash}
+imax=${5:-"3"} # default = 3
+queries=${6:-""} # default is empty
 
-# check if imax is set, if not set it to 3
-if [ -z "$imax" ]; then
-  imax=3 # Try 3 times
+# Get absolute path of queries
+if [[ -n "$queries" ]]; then
+    queries=$(realpath "$queries")
 fi
 
 # go to the directory where the data will be downloaded
@@ -50,13 +49,15 @@ echo ""
 # https://gws-access.jasmin.ac.uk/public/mohc_shared/moose-user-doc/external_user_guide.html
 # Users are asked not to submit more than 50 moo select commands in parallel. 
 
-echo "Query file="
 query_file="query_file.txt"
-tee -a $query_file <<EOF
-begin
-  stash=$stash
-end
-EOF
+{
+  echo "begin"
+  echo "stash=$stash"
+  [[ -n "$queries" ]] && cat "$queries"
+  echo "end"
+} > "$query_file"
+echo "Query file created: $query_file"
+cat $query_file
 echo ""
 
 # load ppfile from moose and save to tmp directory. 
