@@ -23,9 +23,9 @@ The structure of this repo is somewhat based on [cookie-cutter datascience](http
 
 The usage for each folder and the overall structure is explained below. This is not strict, so just add stuff!:
 - Examples of tasks are listed in `examples/`. The folder will contain a `README.md` to provide an overview of the example tasks that the scripts in this folder cover.
-- All reusable functions live in `src/`
-- Scripts that are somewhat stable and do specific tasks live in `script/`. 
-    Scripts in this folder should be self-contained and likely to call functions in `src/`, but they may just use common libraries such as `iris` or `xarray` to perform some tasks.
+- Reusable and stable functions live in `src/`.
+- Scripts for specific tasks live in `script/`. 
+    Scripts in this folder should be self-contained and likely to call functions in `src/`, but they may use shared libraries such as `iris` or `xarray` to perform some tasks.
     - It is good practice to set variables so that scripts are recallable, traceable and task-specific.
 - Interactive data exploration should be in `notebooks/`, especially Python notebooks.
 - Machine-specific and project-specific definitions should be in `config/`
@@ -56,6 +56,8 @@ The usage for each folder and the overall structure is explained below. This is 
     │                         , '_', and a short `-` delimited description, e.g.
     │                         `1.0_initial-data-exploration.ipynb`
     │
+    ├── output             <- Placeholder for figures, tables and plots 
+    │
     ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
     │                         generated with `pip freeze > requirements.txt`
     │
@@ -65,12 +67,12 @@ The usage for each folder and the overall structure is explained below. This is 
     │   └── visualization   
     │
     └── src                <- Source code for use in this project
-        ├── __init__.py    <- Makes src a Python module
+        ├── __init__.py
         ├── consts.py      <- Immutable constants such as physical and chemical constants
         ├── analysis       <- Scripts for repetitive analysis to be loaded as part of data exploration
-        ├── data           <- Scripts to download and convert data from pp to NetCDF
-        ├── util           <- Scripts for general utilities, e.g. loading data 
-        └── visualization  <- Scripts to create exploratory and results-oriented visualisations
+        ├── data           <- Scripts to download data from MASS
+        ├── utils          <- Scripts for general utilities, e.g. loading and converting data
+        └── plot_utils     <- Plotting styles and utility functions
 
 ## Other helpful resources
 
