@@ -4,7 +4,7 @@ This is an effort to document and share scripts with group members. Please sugge
 
 Please feel free to work your way or take some parts of the code!
 
-See the [ukca-eval-python repo](https://github.com/Centre-for-Atmospheric-Science-Cam-Chem/ukesm-eval-python/) for code for evaluating UKESM data against observations. It is also shared and open to contributions! 
+See the [ukca-eval-python repo](https://github.com/Centre-for-Atmospheric-Science-Cam-Chem/ukesm-eval-python/) for code for evaluating UKESM data against observations. It is also shared and open to contributions.
 
 
 **New to this repo?**
