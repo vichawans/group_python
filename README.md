@@ -1,4 +1,4 @@
-# CAS shared scripts for working with UKESM1 data
+# CAS shared scripts
 
 This is an effort to document and share scripts with group members. Please suggest improving this space, and please feel free to fork, add your code, and merge back. This is not to enforce a way of working on anyone. 
 
