@@ -1,17 +1,19 @@
 # CAS shared scripts for working with UKESM1 data
 
-This is an effort to document and share scripts with group members. Please make suggestions on how to improve this space, and please feel free to fork, add your code, and merge back!
+This is an effort to document and share scripts with group members. Please suggest improving this space, and please feel free to fork, add your code, and merge back. This is not to enforce a way of working on anyone. 
 
-This is not to enforce a way of working on anyone. Please feel free to work your way or take some parts of the code!
+Please feel free to work your way or take some parts of the code!
 
-**For new members or people new to working with UKESM1 data**
+See the [ukca-eval-python repo](https://github.com/Centre-for-Atmospheric-Science-Cam-Chem/ukesm-eval-python/) for code for evaluating UKESM data against observations. It is also shared and open to contributions! 
+
+
+**New to this repo?**
 - There is an example folder for everyday tasks. It may be a good idea to start there.
+
 
 ## Table of contents
 - [How is this repo structured? Why?](#how-is-this-repo-structured)
 - [Structure of this repo](#folder-organization)
-- How do I do ...? -> Check the list of useful tasks in the example table of contents!
-- [Plans](#plans)
 - [Useful resources](#other-useful-resources)
 - [Change log](#change-log)
 
@@ -75,7 +77,6 @@ The usage for each folder and the overall structure is explained below. This is 
 - See the [ukca-eval-python repo](https://github.com/Centre-for-Atmospheric-Science-Cam-Chem/ukesm-eval-python/) for code for evaluating UKESM data against observations. It is also shared and open to contributions! 
 - A lot more useful and group-specific information in the group wiki.
 - UKCA training
-
 
 ## Change log
 
