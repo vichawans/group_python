@@ -1,0 +1,31 @@
+# Job configuration
+job:
+  name: "UKESM_data_download"
+  priority: "high"
+
+# SLURM settings
+slurm:
+  l_batch: True
+  account: "acsis"
+  partition: "standard"
+  qos: "high"
+  time: "24:00:00"
+  memory: "200000"
+  array_range: "1-5"
+
+# Paths
+paths:
+  temp_dir: "/work/scratch-pw2/vs480"
+  output_dir: "/gws/nopw/j04/acsis/vs480/model_output"
+  processing_queue: "./processing_queue.csv"
+
+# Retrieving options
+Retrieving:
+  l_extra_query: False
+  query_options: "./query_options.txt"
+  
+
+# Processing options
+processing:
+  conda_env: "cmip6-env"
+  max_retries: 3
