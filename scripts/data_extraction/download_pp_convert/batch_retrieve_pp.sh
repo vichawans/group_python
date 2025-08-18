@@ -14,15 +14,15 @@
 # Usage: sh retrieve_pp_batch.sh
 
 # Set config
-tmpdir="/work/scratch-pw2/vs480/"
+tmpdir="/work/scratch-pw2/vs480"
 processing_queue='./processing_queue_u-dq721.csv'
 
 # Get current task ID, either from slurm or from passing in the variable from interactive shell or from reading config file
 TASK_ID=$SLURM_ARRAY_TASK_ID
 
 # Extract the stream and stash for the current $SLURM_ARRAY_TASK_ID
-jobID=$(awk -F, -v ArrayTaskID="$TASK_ID" '$1==ArrayTaskID {print $2}' $processing_queue)
-stream=$(awk -F, -v ArrayTaskID="$TASK_ID" '$1==ArrayTaskID {print $3}' $processing_queue)
+jobID=$(grep "^$TASK_ID," "$processing_queue" | head -n1 | cut -d',' -f2 | tr -d '\r')
+stream=$(grep "^$TASK_ID," "$processing_queue" | head -n1 | cut -d',' -f3 | tr -d '\r')
 stash=$(grep "^$TASK_ID," "$processing_queue" | head -n1 | cut -d',' -f4 | tr -d '\r')
 
 # Internal variables
@@ -42,8 +42,7 @@ echo "Created/verified directory: $download_dir"
 # submit to mass queue
 # SLURM job submission using config
 SLURM_RETRIEVE_ID=$(sbatch --parsable \
-       --job-name="$APP_JOB_NAME" \
-       --account="mass" \
+       --job-name="$jobID $stash pp" \
        --partition="mass" \
        --qos="mass" \
        retrieve_stash.sh "$jobID" "$stream" "$stash" "$download_dir")
