@@ -6,7 +6,7 @@
 #SBATCH -o %j.out
 #SBATCH -e %j.err
 #SBATCH --time=1:00:00
-#SBATCH --array=1-3 # edit to match the range in array_stream_stash.txt. This can select only the lines needed
+#SBATCH --array=1-25 # edit to match the range in array_stream_stash.txt. This can select only the lines needed
 #SBATCH --mem=200000
 
 # driver script to batch download pp files using retrieve_stash.sh
@@ -15,41 +15,38 @@
 
 # Set config
 tmpdir="/work/scratch-pw2/vs480/"
-imax=3
-queries=""
-processing_queue='./processing_queue.csv'
+processing_queue='./processing_queue_u-dq721.csv'
 
-# Get current task ID
+# Get current task ID, either from slurm or from passing in the variable from interactive shell or from reading config file
 TASK_ID=$SLURM_ARRAY_TASK_ID
 
 # Extract the stream and stash for the current $SLURM_ARRAY_TASK_ID
-jobID=$(awk -F, -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $2}' $processing_queue)
-stream=$(awk -F, -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $3}' $processing_queue)
-stash=$(awk -F, -v ArrayTaskID=$SLURM_ARRAY_TASK_ID '$1==ArrayTaskID {print $4}' $processing_queue)
-
+jobID=$(awk -F, -v ArrayTaskID="$TASK_ID" '$1==ArrayTaskID {print $2}' $processing_queue)
+stream=$(awk -F, -v ArrayTaskID="$TASK_ID" '$1==ArrayTaskID {print $3}' $processing_queue)
+stash=$(grep "^$TASK_ID," "$processing_queue" | head -n1 | cut -d',' -f4 | tr -d '\r')
 
 # Internal variables
-pp_dir="$tmpdir/pp_files/${jobID}_${stream}_${stash}"
+download_dir="$tmpdir/pp_files/${jobID}_${stream}_${stash}"
 
-# Create pp_dir and parent directories if they don't exist
-mkdir -p "$pp_dir"
+# Create download_dir and parent directories if they don't exist
+mkdir -p "$download_dir"
 
 # Verify directory was created successfully
-if [[ ! -d "$pp_dir" ]]; then
-    echo "Error: Failed to create directory $pp_dir" >&2
+if [[ ! -d "$download_dir" ]]; then
+    echo "Error: Failed to create directory $download_dir" >&2
     exit 1
 fi
 
-echo "Created/verified directory: $pp_dir"
+echo "Created/verified directory: $download_dir"
 
 # submit to mass queue
-# sh retrieve_stash.sh $jobID $stream $stash $pp_dir $imax $queries $>> retrieve_pp_${stash}.log & 
 # SLURM job submission using config
 SLURM_RETRIEVE_ID=$(sbatch --parsable \
        --job-name="$APP_JOB_NAME" \
        --account="mass" \
        --partition="mass" \
        --qos="mass" \
-       retrieve_stash.sh)
+       retrieve_stash.sh "$jobID" "$stream" "$stash" "$download_dir")
 
-echo "Submitted MASS retrieval job for $SLURM_ARRAY_TASK_ID with job ID: $SLURM_RETRIEVE_ID"
+echo "Submitted MASS retrieval job for $TASK_ID with job ID: $SLURM_RETRIEVE_ID"
+echo "jobID=$jobID; stream=$stream; stash=$stash"
