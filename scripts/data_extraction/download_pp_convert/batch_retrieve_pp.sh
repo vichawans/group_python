@@ -14,6 +14,7 @@
 # Usage: sh retrieve_pp_batch.sh
 
 # Set config
+# TODO: change to config.yaml
 tmpdir="/work/scratch-pw2/vs480"
 processing_queue='./processing_queue_u-dq721.csv'
 
