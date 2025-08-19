@@ -1,10 +1,13 @@
 pp_root_dir: "/work/scratch-pw2/vs480/pp_files"
 
 stashes:
+  - "34001"  # O3
   - "34002"  # NO
   - "34996"  # NO2
   - "34003"  # NO3
-  - "34001"  # O3
+  # - "34005"  # N2O5
+  # - "34006"  # HO2NO2
+  - "34007"  # HONO2
   - "50062"  # airmass
   - "50063"  # tropmask
 
