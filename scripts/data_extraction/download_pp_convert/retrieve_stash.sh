@@ -28,13 +28,13 @@ download_dir=$4 # e.g. /work/scratch-pw2/vs480/pp_files/$jobID/${jobID}_${stream
 imax=${5:-"3"} # default = 3
 queries=${6:-""} # default is empty
 
-# Get absolute path of queries
+# Get absolute path of queries if defined
 if [[ -n "$queries" ]]; then
     queries=$(realpath "$queries")
 fi
 
 # go to the directory where the data will be downloaded
-cd $download_dir
+cd "$download_dir"  || { echo "ERROR: $download_dir not exist"; exit 1; }
 
 # Log variable information
 echo "Current directory = $(pwd)"
@@ -52,7 +52,7 @@ echo ""
 query_file="query_file.txt"
 {
   echo "begin"
-  echo "stash=$stash"
+  echo "  stash=$stash"
   [[ -n "$queries" ]] && cat "$queries"
   echo "end"
 } > "$query_file"
@@ -62,10 +62,10 @@ echo ""
 
 # load ppfile from moose and save to tmp directory. 
 i=1
-until [ $i -gt $imax ]; do
+until [ $i -gt "$imax" ]; do
   echo "Attemp $i/$imax;"
   echo "  moo select --fill-gaps-and-overwrite-smaller-files $query_file moose:crum/$jobID/$stream ./"
-  moo select --fill-gaps-and-overwrite-smaller-files $query_file moose:crum/$jobID/$stream/* ./ 
+  moo select --fill-gaps-and-overwrite-smaller-files $query_file moose:crum/"$jobID"/"$stream" ./ 
   ((i++))
 
   sleep 10s # wait before issuing the next request
