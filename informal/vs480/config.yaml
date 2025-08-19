@@ -1,0 +1,17 @@
+pp_root_dir: "/work/scratch-pw2/vs480/pp_files"
+
+stashes:
+  - "34002"  # NO
+  - "34996"  # NO2
+  - "34003"  # NO3
+  - "34001"  # O3
+  - "50062"  # airmass
+  - "50063"  # tropmask
+
+dataset_suites:
+  e1-st1-hc: u-br438
+  e1-st2-hc: u-dh394
+  e2-st2-hc: u-dq680
+  e2-st2+lnox4-hc: u-ds004
+  e2-st2+ipl8all-hc: u-dq721
+  e2-st2+ipl8chemtracer-hc: u-dq731

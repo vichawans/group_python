@@ -89,7 +89,7 @@ def load_um_data(data_path, stash_list, engine="zarr", rename=True):
         )
         for f in filename_glob
     ]
-    
+
     # combine files into a single dataset and sort by time
     dataset = xr.combine_by_coords(
         file_list, join="outer", combine_attrs="drop_conflicts"
@@ -98,12 +98,12 @@ def load_um_data(data_path, stash_list, engine="zarr", rename=True):
     if rename:
         # rename the coordinates
         rename_dict_ukca = {
-        "latitude": "lat",
-        "longitude": "lon",
-        "model_level_number": "lev",
+            "latitude": "lat",
+            "longitude": "lon",
+            "model_level_number": "lev",
         }
         dataset = dataset.rename(rename_dict_ukca)
-        
+
         # filter only keys with variables to be renamed in dataset
         filtered_vars = {
             i: rename_vars[i] for i in list(dataset.keys()) if i in rename_vars.keys()
