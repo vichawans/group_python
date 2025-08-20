@@ -1,38 +1,38 @@
 pp_root_dir: "/work/scratch-pw2/vs480/pp_files"
 
 stashes:
-  - "34001"  # O3
-  - "34002"  # NO
-  - "34996"  # NO2
-  - "34003"  # NO3
-  - "34005"  # N2O5
-  - "34006"  # HO2NO2
-  - "34007"  # HONO2 (HNO3)
-  - "34049"  # N2O
-  - "50062"  # airmass
-  - "50063"  # tropmask
+  - "34001" # O3
+  - "34002" # NO
+  - "34996" # NO2
+  - "34003" # NO3
+  - "34005" # N2O5
+  - "34006" # HO2NO2
+  - "34007" # HONO2 (HNO3)
+  - "34049" # N2O
+  - "50062" # airmass
+  - "50063" # tropmask
 
 dataset_suites:
-  e1-st1-hc: 
-    rose-suite: u-br438
-    long-name: 'UKESM1-StratTrop1'
-    exp: 'piClim-HC'
-  e1-st2-hc: 
-    rose-suite: u-dh394
-    long-name: 'UKESM1-StratTrop2'
-    exp: 'piclim-HC'
-  e2-st2-hc:  
-    rose-suite: u-dq680
-    long-name: 'pUKESM2-StratTrop2'
-    exp: 'piclim-HC'
-  e2-st2+lnox4-hc:  
-    rose-suite: u-ds004
-    long-name: 'pUKESM2-StratTrop2+lnox4'
-    exp: 'piclim-HC'
-  e2-st2+adv8A-hc: 
-    rose-suite: u-dq721
-    long-name: 'pUKESM2-StratTrop2+adv8A'
-    exp: 'piclim-HC'
-  e2-st2+adv8B-hc:  
-    rose-suite: u-dq731
-    long-name: 'pUKESM2-StratTrop2+adv8B'
+  e1-st1-hc:
+    rose-suite: "u-br438"
+    long-name: "UKESM1-StratTrop1"
+    exp: "piClim-HC"
+  e1-st2-hc:
+    rose-suite: "u-dh394"
+    long-name: "UKESM1-StratTrop2"
+    exp: "piclim-HC"
+  e2-st2-hc:
+    rose-suite: "u-dq680"
+    long-name: "pUKESM2-StratTrop2"
+    exp: "piclim-HC"
+  e2-st2+lnox4-hc:
+    rose-suite: "u-ds004"
+    long-name: "pUKESM2-StratTrop2+lnox4"
+    exp: "piclim-HC"
+  e2-st2+adv8A-hc:
+    rose-suite: "u-dq721"
+    long-name: "pUKESM2-StratTrop2+adv8A"
+    exp: "piclim-HC"
+  e2-st2+adv8B-hc:
+    rose-suite: "u-dq731"
+    long-name: "pUKESM2-StratTrop2+adv8B"
