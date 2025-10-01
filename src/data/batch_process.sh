@@ -188,6 +188,7 @@ echo "Start: $jobID $stream $stash"
 # If download only and not convert
 if [[ "$JOB_L_DOWNLOAD" = "True" ]]; then
 
+    echo ""
     echo "Download $jobID $stream $stash"
     echo ""
 
@@ -211,9 +212,10 @@ if [[ "$JOB_L_DOWNLOAD" = "True" && "$JOB_L_CONVERT" = "True" ]]; then
     if [[ $copy_converted = 'True' ]]; then
         batch_copy "$convert_dir" "$converted_save_dir_full" "$slurm_convert_job_id"
     fi
-
+fi
 # Just convert
-else [[ "$JOB_L_DOWNLOAD" = "False" && "$JOB_L_CONVERT" = "True" ]]
+
+if [[ "$JOB_L_DOWNLOAD" = "False" && "$JOB_L_CONVERT" = "True" ]]; then
 
     # This will convert each pp file in $download_dir 
     batch_convert_pp
@@ -222,6 +224,7 @@ else [[ "$JOB_L_DOWNLOAD" = "False" && "$JOB_L_CONVERT" = "True" ]]
     if [[ $copy_converted = 'True' ]]; then
         batch_copy "$convert_dir" "$converted_save_dir_full" "$slurm_convert_job_id"
     fi
+
 fi
 
 # If copying downloaded files without actually downloading files
