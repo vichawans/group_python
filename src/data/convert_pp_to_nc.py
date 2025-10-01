@@ -19,20 +19,18 @@ def get_current_time():
     current_time = now.strftime("%H:%M:%S")
     return current_time
 
+
 """
 Convert a pp file in `pp_file_path` to an nc file and save to `nc_file_path`.
 """
 
 # read in .pp file
-print(f'  Loading file ... {get_current_time()}',end = '')
-cubes = iris.load(pp_file_path,callback=def_STASH.UKCA_callback)
-print(f' - {get_current_time()}  DONE')
+print(f"  Loading file ... {get_current_time()}", end="")
+cubes = iris.load(pp_file_path, callback=def_STASH.UKCA_callback)
+print(f" - {get_current_time()}  DONE")
 
 # write to .nc file
-print(f'  Saving to .nc ... {get_current_time()}', end = '')
+print(f"  Saving to .nc ... {get_current_time()}", end="")
 # arr.to_netcdf(nc_dir)
 iris.save(cubes, nc_file_path)
-print(f' - {get_current_time()}  DONE')
-    
-
-
+print(f" - {get_current_time()}  DONE")
