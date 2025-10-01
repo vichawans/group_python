@@ -8,12 +8,14 @@ yaml_file='./config.yaml'
 proj_dir='/home/users/vs480/scripts/group_python'
 
 # set project paths
-util_dir="${proj_dir}/src/util"
 src_data_dir="${proj_dir}/src/data"
+export UTIL_DIR="${proj_dir}/src/util"
+export PATH="$UTIL_DIR:$src_data_dir:$PATH"
+
 
 # Load variables from yaml file
 tmp_env=$(mktemp -p "$TMPDIR" env_XXXXXX.sh)
-python3 "${util_dir}/yaml_to_shell.py" $yaml_file > "$tmp_env"
+python3 "${UTIL_DIR}/yaml_to_shell.py" $yaml_file > "$tmp_env"
 
 # shellcheck disable=SC1090
 source "$tmp_env"
