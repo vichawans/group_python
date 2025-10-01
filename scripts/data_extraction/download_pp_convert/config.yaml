@@ -3,25 +3,25 @@ job:
   name: "UKESM_data_download"
   l_batch: True
   l_download: True
-  l_copy_downloaded: True
-  l_convert: False
-  l_copy_converted: False
+  l_copy_downloaded: False
+  l_convert: True
+  l_copy_converted: True
 
 # SLURM settings
 slurm:
   account: "acsis"
-  partition: "debug"
-  qos: "debug"
-  time: "1:00:00"
+  partition: "standard"
+  qos: "short"
+  time: "4:00:00"
   memory: "200000"
-  array_range: "1-2"
+  array_range: "3-4"
 
 # Paths
 path:
   tmp_dir: "/work/scratch-pw2/vs480"
   downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional
-  processing_queue: "./processing_queue_u-bp901.csv"
+  processing_queue: "./processing_queues/processing_queue_u-bp901.csv"
 
 # Retrieving options
 download:

@@ -8,9 +8,9 @@ yaml_file='./config.yaml'
 proj_dir='/home/users/vs480/scripts/group_python'
 
 # set project paths
-src_data_dir="${proj_dir}/src/data"
+export SRC_DATA_DIR="${proj_dir}/src/data"
 export UTIL_DIR="${proj_dir}/src/util"
-export PATH="$UTIL_DIR:$src_data_dir:$PATH"
+export PATH="$UTIL_DIR:$SRC_DATA_DIR:$PATH"
 
 
 # Load variables from yaml file
