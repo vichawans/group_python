@@ -19,18 +19,18 @@ slurm:
 # Paths
 path:
   tmp_dir: "/work/scratch-pw2/vs480"
-  downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output"
-  converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output"
+  downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional
+  converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional
   processing_queue: "./processing_queue_u-bp901.csv"
 
 # Retrieving options
 download:
   l_extra_query: False
-  max_retries: 3
+  max_retries: 3 # optional
   # query_options: "./query_options.txt"
 
 # Processing options
 convert:
-  l_use_downloaded_save_dir: False
+  l_use_downloaded_save_dir: False # optional. For converting from pp files in downloaded_save_dir
   conda_env: "cmip6-env"
   format: "nc" # 'nc' or 'zarr'
