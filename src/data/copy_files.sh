@@ -6,4 +6,5 @@ src=$1
 dest=$2
 
 echo "Copy files from $src to $dest"
-cp -r "$src" "$dest"
+mkdir -p "$dest"
+cp "$src"/* "$dest"

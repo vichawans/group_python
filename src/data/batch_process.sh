@@ -111,7 +111,7 @@ batch_copy () {
 
     echo "Submitted copy job with job ID: $copy_id"
     if [[ -n "$dependent_id" ]]; then
-        echo "Copy job will begin after $dependent_id"
+        echo "Job will begin after $dependent_id"
     fi
 
     echo ""
@@ -131,13 +131,13 @@ stash=$(grep "^$SLURM_ARRAY_TASK_ID," "$processing_queue" | head -n1 | cut -d','
 
 # Internal variables
 # set download dir to tmp dir if downloading data or if copying data
-if [[ "$JOB_L_DOWNLOAD" = "True" || "$JOB_COPY_DOWNLOADED" = "True" ]]; then
+if [[ "$JOB_L_DOWNLOAD" = "True" || "$JOB_L_COPY_DOWNLOADED" = "True" ]]; then
     download_dir="$PATH_TMP_DIR/pp_files/${jobID}/${stream}_${stash}"
     mkdir -p "$download_dir"
 fi
 
 # set download_dir and convert_dir if converting from pp
-if [[ "$JOB_L_CONVERT" = "True"  || "$JOB_COPY_CONVERTED" = "True"  ]]; then
+if [[ "$JOB_L_CONVERT" = "True"  || "$JOB_L_COPY_CONVERTED" = "True"  ]]; then
     convert_dir="$PATH_TMP_DIR/${CONVERT_FORMAT}_files/${jobID}/${stream}_${stash}"
     mkdir -p "$convert_dir"
 
@@ -182,7 +182,7 @@ fi
 
 ### EXECUTION ##################################################################
 
-echo "Start: $jobID $stream $stash"
+echo "Start submission: $jobID $stream $stash"
 echo ""
 
 # If download only and not convert
@@ -190,7 +190,7 @@ if [[ "$JOB_L_DOWNLOAD" = "True" ]]; then
 	batch_retrieve_pp
 	echo ""
 
-	echo "Started downloading with slurm_download_job_id=$slurm_convert_job_id"
+	echo "Submitted downloading with slurm_download_job_id=$slurm_download_job_id"
     echo ""
 fi
 
@@ -209,9 +209,7 @@ fi
 if [[ "$JOB_L_DOWNLOAD" = "True" && "$JOB_L_CONVERT" = "True" ]]; then
 
     batch_convert_pp "$slurm_download_job_id"
-    echo ""
-
-	echo "Started converting with slurm_convert_job_id=$slurm_convert_job_id"
+	echo "Submitted converting with slurm_convert_job_id=$slurm_convert_job_id"
 	echo "This job depends on slurm_download_job_id=$slurm_download_job_id"
     echo ""
 
@@ -221,7 +219,7 @@ fi
 if [[ "$JOB_L_DOWNLOAD" = "False" && "$JOB_L_CONVERT" = "True" ]]; then
 
     batch_convert_pp
-	echo "Started converting with slurm_convert_job_id=$slurm_convert_job_id"
+	echo "Submitted converting with slurm_convert_job_id=$slurm_convert_job_id"
     echo ""
 
 fi
@@ -237,4 +235,4 @@ if [[  "$JOB_L_CONVERT" = "False" && $copy_converted = 'True' ]]; then
 fi
 
 echo ""
-echo "Finish: $jobID $stream $stash"
+echo "Finishd submission for: $jobID $stream $stash"
