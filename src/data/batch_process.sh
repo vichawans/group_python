@@ -13,7 +13,7 @@
 # Note that command-line arguments to sbatch (like --job-name, --partition, etc.) 
 # override the preceeding #SBATCH directives in this script.
 
-# Usage: sh retrieve_pp_batch.sh
+# Usage: sbatch retrieve_pp_batch.sh
 
 ### DEFINE FUNCTIONS ##################################################################
 
@@ -85,6 +85,7 @@ batch_convert_pp () {
 }
 
 batch_copy () {
+	# copy all files in $src directory to $dest directory
     src=$1
     dest=$2
     dependent_id=$3
