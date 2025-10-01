@@ -14,14 +14,15 @@ slurm:
   qos: "short"
   time: "4:00:00"
   memory: "200000"
-  array_range: "3-4"
+  array_range: "1-25"
 
 # Paths
 path:
   tmp_dir: "/work/scratch-pw2/vs480"
   downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional
-  processing_queue: "./processing_queues/processing_queue_u-bp901.csv"
+  # relative to working directory
+  processing_queue: "./processing_queues/processing_queue_u-br438.csv"
 
 # Retrieving options
 download:
