@@ -5,7 +5,7 @@
 
 # USER EDIT
 yaml_file='./config.yaml'
-proj_dir='/home/users/vs480/scripts/group_python'
+proj_dir='../../../'
 
 # set project paths
 export SRC_DATA_DIR="${proj_dir}/src/data"

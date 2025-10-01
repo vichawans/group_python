@@ -14,7 +14,7 @@ slurm:
   qos: "short"
   time: "4:00:00"
   memory: "200000"
-  array_range: "1-25"
+  array_range: "1-6"
 
 # Paths
 path:
@@ -22,7 +22,7 @@ path:
   downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional
   # relative to working directory
-  processing_queue: "./processing_queues/processing_queue_u-br438.csv"
+  processing_queue: "./processing_queues/processing_queue_cmip7_sad.csv"
 
 # Retrieving options
 download:
@@ -33,5 +33,4 @@ download:
 # Processing options
 convert:
   l_use_downloaded_save_dir: False # optional. For converting from pp files in downloaded_save_dir
-  conda_env: "cmip6-env"
   format: "nc" # 'nc' or 'zarr'

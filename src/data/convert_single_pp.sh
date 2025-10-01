@@ -9,8 +9,6 @@ fi
 
 # Load the necessary modules and activate the conda environment
 module load jaspy
-source ~/.bashrc
-conda activate "$CONVERT_CONDA_ENV"
 
 if [[ "$CONVERT_FORMAT" = "nc" ]]; then
     # need to add the path to this script!
