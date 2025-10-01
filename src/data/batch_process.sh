@@ -183,48 +183,20 @@ fi
 ### EXECUTION ##################################################################
 
 echo "Start: $jobID $stream $stash"
-
+echo ""
 
 # If download only and not convert
 if [[ "$JOB_L_DOWNLOAD" = "True" ]]; then
-
-    echo ""
-    echo "Download $jobID $stream $stash"
-    echo ""
-
 	batch_retrieve_pp
+	echo ""
 
-    # Copy pp files after download
-    if [[ $copy_downloaded = 'True' ]]; then
-        batch_copy "$download_dir" "$downloaded_save_dir_full" "$slurm_download_job_id"
-    fi
-
+	echo "Started downloading with slurm_download_job_id=$slurm_convert_job_id"
+    echo ""
 fi
 
-# If download then convert
-if [[ "$JOB_L_DOWNLOAD" = "True" && "$JOB_L_CONVERT" = "True" ]]; then
-
-    batch_convert_pp "$slurm_download_job_id"
-	echo "Started downloading with slurm_convert_job_id=$slurm_convert_job_id"
-	echo "This job depends on slurm_download_job_id=$slurm_download_job_id"
-    # Copy pp files after download
-
-    if [[ $copy_converted = 'True' ]]; then
-        batch_copy "$convert_dir" "$converted_save_dir_full" "$slurm_convert_job_id"
-    fi
-fi
-# Just convert
-
-if [[ "$JOB_L_DOWNLOAD" = "False" && "$JOB_L_CONVERT" = "True" ]]; then
-
-    # This will convert each pp file in $download_dir 
-    batch_convert_pp
-	echo "Started downloading with slurm_convert_job_id=$slurm_convert_job_id"
-
-    if [[ $copy_converted = 'True' ]]; then
-        batch_copy "$convert_dir" "$converted_save_dir_full" "$slurm_convert_job_id"
-    fi
-
+# Copy pp files after download
+if [[ "$JOB_L_DOWNLOAD" = "True" && $copy_downloaded = 'True' ]]; then
+	batch_copy "$download_dir" "$downloaded_save_dir_full" "$slurm_download_job_id"
 fi
 
 # If copying downloaded files without actually downloading files
@@ -232,9 +204,37 @@ if [[ "$JOB_L_DOWNLOAD" = "False" && $copy_downloaded = 'True' ]]; then
     batch_copy "$download_dir" "$downloaded_save_dir_full"
 fi
 
+
+# If download then convert
+if [[ "$JOB_L_DOWNLOAD" = "True" && "$JOB_L_CONVERT" = "True" ]]; then
+
+    batch_convert_pp "$slurm_download_job_id"
+    echo ""
+
+	echo "Started converting with slurm_convert_job_id=$slurm_convert_job_id"
+	echo "This job depends on slurm_download_job_id=$slurm_download_job_id"
+    echo ""
+
+fi
+
+# Just convert
+if [[ "$JOB_L_DOWNLOAD" = "False" && "$JOB_L_CONVERT" = "True" ]]; then
+
+    batch_convert_pp
+	echo "Started converting with slurm_convert_job_id=$slurm_convert_job_id"
+    echo ""
+
+fi
+
+# If copying converted files after conversion
+if [[ "$JOB_L_CONVERT" = "True" &&  $copy_converted = 'True' ]]; then
+	batch_copy "$convert_dir" "$converted_save_dir_full" "$slurm_convert_job_id"
+fi
+
 # If copying converted files without actually downloading files
 if [[  "$JOB_L_CONVERT" = "False" && $copy_converted = 'True' ]]; then
     batch_copy "$convert_dir" "$converted_save_dir_full"
 fi
 
+echo ""
 echo "Finish: $jobID $stream $stash"
