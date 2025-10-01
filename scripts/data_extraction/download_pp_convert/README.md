@@ -1,31 +1,27 @@
 # Download pp file from MASS and convert to zarr (or NetCDF) files
 
-This folder contains editable scripts for streamlining data retrieval from MASS and conversion of pp files to zarr/NetCDF files. 
+This folder contains scripts for streamlining data retrieval from MASS and conversion of pp files to NetCDF files. 
 
-This code works massively in paralell to retrieve pp and convert to NetCDF/zarr files. This code also makes use of scheduling software, `slurm`, so everything runs in parallel on LOTUS compute nodes to speed up conversion.
+This works on JASMIN (and any other system that has access to mass-cli).
 
-Main script, `batch_retrieve_and_convert_to_zarr.sh`/`batch_retrieve_and_convert_to_nc.sh` is called in parallel using slurm's `sbatch` for each stash in a user-defined list. Each slurm array job for each stash is executed in parallel:
+This code is hands off and is works in parallel to retrieve pp and convert to NetCDF/zarr files by using scheduling software, `slurm`, so everything runs in parallel on LOTUS compute nodes to speed up conversion.
 
-1. Call `retrieve_stash.sh` to retrieve pp files
-2. Call `convert_pp_to_zarr.py` to convert pp to zarr for every pp file that contain the stash in archive in parallel
-
-Similarly, `batch_retrieve_and_convert_to_nc.sh` converts to NetCDF.
-
-2. Call `convert_pp_to_nc.py` for each pp file in archive in parallel
-
-Each procedure can be evoked separately in batch, too.
-1. `batch_retrieve_pp.sh` downloads pp only by calling `retrieve_stash.sh`
-2. `batch_convert_pp_to_nc.sh` convert pp to NetCDF by calling `convert_pp_to_nc.py` (In progress)
-2. `batch_convert_pp_to_zarr.sh` convert pp to zarr by calling `convert_pp_to_zarr.py` (In progress)
 
 ---
 
 ## Usage
 
+Main script, `driver_download_pp_convert.sh` should be run locally on either sci machine of Jasmin. 
+
+This script will submit other scripts slurm's `sbatch` for each stash in a user-defined list, genrally called `processing_queue.csv`. Each slurm array job for each stash is executed in parallel. 
+
+Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml` should be editted to set the job details. 
+
+### Steps for using the script
+
 1. Check prerequisites
-    - [ ] Check that there is a conda environment that has iris and xarray
-    - [ ] If execute as batch script, make sure to be on a sci machine for access to slurm
-    - [ ] If execute as batch script, check for batch job compute allocation. See if user has account with QOS short at least. If massively parallel, check for high. [See manual](https://help.jasmin.ac.uk/docs/batch-computing/how-to-submit-a-job/).
+    - [ ] Check that there is a conda environment that has iris and yaml. Module jaspy should have this by default.
+    - [ ] If execute as batch script, check for batch job compute allocation. See if user has account with QOS short at least. [See manual](https://help.jasmin.ac.uk/docs/batch-computing/how-to-submit-a-job/).
 
         ``` bash
         user@sci-ph-01$ useraccounts
@@ -39,43 +35,55 @@ Each procedure can be evoked separately in batch, too.
     - [ ] Check the available stashes in a suite (see below)
     - [ ] Check access to `mass-cli` from current sci machine (see below)
 
-### CASE1: Submitting batch script to slurm on jasmin physical or virtual machines using `retrieve_and_convert_to_zarr_batch.sh` / `retrieve_and_convert_to_nc_batch.sh`
+2. Edit or create `processing_queue.csv` file
+    - This is for sbatch to parallelize the download for each stash. The file should contain 3 columns. See `processing_queues/processing_queue.csv` for an example.
+    - I find it helpful to create the csv in external point-and-click software like Excel/Google Sheets
 
-2. Edit `array_stream_stash` file
-    - This is for sbatch to parallelize the download for each stash. The file should contain 3 columns. See `array_stream_stash_example.txt` for an example.
+3. Edit `config.yaml`. This file sets how to run the script for each colum of `processing_queue.csv`.
+    - job:
+        - `name`: job name for slurm
+        - `l_batch`: True/False. Must be True for now as the code only accept sbatch execution
+        - `l_download`: True/False. Set to True if downloading the -stash items
+        - `l_copy_downloaded`: True/False. Set to True if copying the pp files for each stash items from tmp to other directory.
+        - `l_convert`: True/False. Set to True of converting pp to nc or zarr. See convert section below.
+        - `l_copy_converted`: True/False. Set to True if copying the converted stash items from tmp to other directory.
+    - slurm:
+        - `account`: "account". See prerequisite
+        - `partition`: "standard". See prerequisite. 
+        - `qos`: "short". See prerequisite. 
+        - `time`: "4:00:00". See prerequisite. 4 hours is the upper limit for short qos.
+        - `memory`: "200000". See prerequisite.
+        - `array_range`: "1-6". Set array range in `processing_queue.csv` to execute the code. This does not have to be the whole range of csv and does not have to be continuous. e.g. '1,4,10-13' is acceptable
+    - `path`:
+        - `tmp_dir`: "/work/scratch-pw2/<USERNAME>" the usual scrath location for a user. Use disk with parallel write access for speed.
+        - `downloaded_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing pp files long-term 
+        - `converted_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing converted files long-term
+        - `processing_queue`: "./processing_queues/processing_queue.csv" . Relative or absolute path to the `processing_queue.csv`. Name can be changed to submit different queues. Do not forget to set `array_range` accordingly.
+    - download:
+        - `l_extra_query`: True/False. Set to True if need extra query options. Then specify the query option file below.
+        - `max_retries`: 3 optional. Just in case need more than 3 retries for downloading data from MASS
+        - `query_options`: "./query_options.txt" optional, for setting extra query options. 
+    - convert:
+        - `l_use_downloaded_save_dir`: True/False. Optional. For converting from pp files in `downloaded_save_dir` instead of from `tmp_dir`
+        - `format`: "nc"/"zarr" case sensitive (untested). only nc is working now
 
-3. Edit `retrieve_and_convert_to_zarr_batch.sh`/ `retrieve_and_convert_to_nc_batch.sh`
-    1. Edit sbatch options
-        - [ ] `#SBATCH --job-name=bh626` only use for monitoring job
-        - [ ] `#SBATCH --account=mygws` 
-        - [ ] `#SBATCH --partition=short`
-        - [ ] `#SBATCH --qos=short`
-        - [ ] `#SBATCH --array=1-10` edit to match items in `array_stream_stash.txt`
 
-    2. Edit job options
-        - [ ] `conda_env` Conda environment with iris and xarray
-        - [ ] `tmpdir` temporary directory for pp files. `/work/scratch-pw2/` is a good one as it supports parallel write.
-        - [ ] `outdir` directory for converted files
-        - [ ] `imax` number of iterations to try downloading pp file to patch up any corrupted download (default=3)
-        - [ ] `jobID` e.g. u-df123
-        - [ ] `pubkey` path to a public key that is shared for login node and sci node
-
-4. Submit the code
+4. Submit the code from the code directory
 ``` bash
-sbatch retrieve_and_convert_to_zarr_batch.sh
+sbatch driver_download_pp_convert.sh
 ```
-or 
-``` bash
-sbatch retrieve_and_convert_to_nc_batch.sh
-```
+
 This should output log and error file in the current directory.
 
 5. Monitor the job
 ``` bash
 squeue --me
 ```
-
-### CASE2: Submitting batch script to retrieve pp files only (In progress)
+This should spawn a master job, then the master job should spawn 
+- downloading: one array job for each row in the processing queue csv file, as directed by array_range.
+- copying downloaded pp: one array job that depends on the completion of downloading job
+- converting: one array job for stash. This then spawn one job for each pp file. There will be a lot of jobs.
+- copying converted file: one array job for each stash. This will wait for the conversion to be done.
 
 ---
 ## Useful code snippets
@@ -91,25 +99,5 @@ This lists all stash items in each stream in separate text files.
 ---
 ## Known problem
 
-- [ ] `array_stream_stash.txt` needs to have specific end-of-line sequence (LF) or `awk` does not work. 
-- [ ] This code will always try to check for download pp `imax` times. It's probably better to don't try if the download is not corrupted to be a good MASS citizen...
-- [ ] `mass-cli` is not accessible from `sci-ph-0*` machines but is accessible from login nodes. The workaround is to create a tunnel to login node to mass-cli from sci machines.
-
-    1. ssh to login node (from local), e.g. `login-02`
-    2. Add an ssh key to sci machine
-        ``` bash
-        [vs480@login-02 ~]$ ssh-copy-id -i id_ed25519_login sci-ph-01; ssh-copy-id -i id_ed25519 sci-ph-01
-        ```
-    3. Add tunnelling from login node to mass and use this tunnel instead of ssh from sci machine directly. -> Edit `.ssh/config`
-        ``` 
-        Host jasmin-mass
-            ProxyJump login-02
-            HostName mass-cli.jasmin.ac.uk
-            User vs480
-            ServerAliveInterval 300
-            ForwardAgent yes
-        ```
-
-- [ ] for some unknown reasons, `.ssh/authorized_keys` keep resetting after 10 minutes or so of adding a public key!!!! I have no idea why and it's annoying. The workaround is to re-execute step 2 above.
-    - I have checked, it is not slurm, not my script. NO IDEA. 
-    - This is why we need to check for `$pubkey` at the start of the download script. 
+- [ ] This code will always try to check for download pp `max_retries` times. It's probably better to don't try if the download is not corrupted to be a good MASS citizen...
+- [ ] working directory in `driver_download_pp_convert.sh` is relative to current directory and is hardcoded. Probably need a better way of doing this.
