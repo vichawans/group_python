@@ -137,7 +137,7 @@ if [[ "$JOB_L_DOWNLOAD" = "True" || "$JOB_COPY_DOWNLOADED" = "True" ]]; then
 fi
 
 # set download_dir and convert_dir if converting from pp
-if [[ "$JOB_L_CONVERT" = "True" ]]; then
+if [[ "$JOB_L_CONVERT" = "True"  || "$JOB_COPY_CONVERTED" = "True"  ]]; then
     convert_dir="$PATH_TMP_DIR/${CONVERT_FORMAT}_files/${jobID}/${stream}_${stash}"
     mkdir -p "$convert_dir"
 
