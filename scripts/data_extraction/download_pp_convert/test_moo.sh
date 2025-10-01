@@ -4,4 +4,5 @@ moo ls $src_uri
 hostname
 echo "Hi world, from moo"
 echo $1
+env | grep -i SLURM
 exit
