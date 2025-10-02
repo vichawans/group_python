@@ -1,30 +1,36 @@
-# Job configuration
+# Job controls
 job:
   name: "UKESM_data_download"
-  priority: "high"
+  l_batch: True
+  l_download: True
+  l_copy_downloaded: False
+  l_convert: True
+  l_copy_converted: True
 
 # SLURM settings
 slurm:
-  l_batch: True
   account: "acsis"
-  partition: "debug"
-  qos: "debug"
-  time: "24:00:00"
+  partition: "standard"
+  qos: "short"
+  time: "4:00:00"
   memory: "200000"
-  array_range: "1-5"
+  array_range: "1-6"
 
 # Paths
-paths:
-  temp_dir: "/work/scratch-pw2/vs480"
-  output_dir: "/gws/nopw/j04/acsis/vs480/model_output"
-  processing_queue: "./processing_queue.csv"
+path:
+  tmp_dir: "/work/scratch-pw2/vs480"
+  downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
+  converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
+  # relative to working directory
+  processing_queue: "./processing_queues/processing_queue_cmip7_sad.csv"
 
 # Retrieving options
-Retrieving:
+download:
   l_extra_query: False
-  query_options: "./query_options.txt"
+  max_retries: 3 # optional
+  query_options: "./query_options.txt" # optional. Use only if l_extra_query=True
 
 # Processing options
-processing:
-  conda_env: "cmip6-env"
-  max_retries: 3
+convert:
+  l_use_downloaded_save_dir: False # optional. For converting from pp files in downloaded_save_dir
+  format: "nc" # 'nc' or 'zarr'
