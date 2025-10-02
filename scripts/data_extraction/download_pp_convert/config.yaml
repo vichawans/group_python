@@ -19,8 +19,8 @@ slurm:
 # Paths
 path:
   tmp_dir: "/work/scratch-pw2/vs480"
-  downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional
-  converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional
+  downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
+  converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
   # relative to working directory
   processing_queue: "./processing_queues/processing_queue_cmip7_sad.csv"
 
@@ -28,7 +28,7 @@ path:
 download:
   l_extra_query: False
   max_retries: 3 # optional
-  # query_options: "./query_options.txt"
+  query_options: "./query_options.txt" # optional. Use only if l_extra_query=True
 
 # Processing options
 convert:
