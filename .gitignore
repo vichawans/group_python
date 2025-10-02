@@ -1,6 +1,6 @@
-*.out
-*.err
+
 *.pyc
 *.out
 *.err
 *.log
+
