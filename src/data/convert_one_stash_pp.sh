@@ -37,7 +37,7 @@ for pp_file in $pp_files; do
         --time=\"$SLURM_TIME\" \
         --mem=\"$SLURM_MEMORY\" \
 		--output=\"log/convert_%j.out\" \
-		--error=\"log/convert_%j.err\" \ "
+		--error=\"log/convert_%j.err\" "
 
     echo "Converting $pp_file in $download_dir to $CONVERT_FORMAT file" 
     echo "and save to $converted_dir as $converted_file"
