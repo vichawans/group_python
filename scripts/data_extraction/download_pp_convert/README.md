@@ -78,6 +78,14 @@ This should output log and error file in the log folder in the current directory
 
 5. Monitor the job
 
+Auto update
+
+```bash
+watch squeue --me
+```
+
+print out to terminal once
+
 ```bash
 squeue --me
 ```
