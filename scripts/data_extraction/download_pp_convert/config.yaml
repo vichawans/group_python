@@ -7,8 +7,8 @@ job:
 slurm:
   l_batch: True
   account: "acsis"
-  partition: "standard"
-  qos: "high"
+  partition: "debug"
+  qos: "debug"
   time: "24:00:00"
   memory: "200000"
   array_range: "1-5"
@@ -23,7 +23,6 @@ paths:
 Retrieving:
   l_extra_query: False
   query_options: "./query_options.txt"
-  
 
 # Processing options
 processing:
