@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-*.out
-*.err
-*.pyc
-=======
+
 *.pyc
 *.out
 *.err
 *.log
->>>>>>> origin/main
+
