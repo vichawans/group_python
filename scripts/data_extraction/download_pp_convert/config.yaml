@@ -12,9 +12,9 @@ slurm:
   account: "acsis"
   partition: "standard"
   qos: "short"
-  time: "4:00:00"
+  time: "1:00:00"
   memory: "200000"
-  array_range: "1-6"
+  array_range: "1-16"
 
 # Paths
 path:
@@ -22,13 +22,13 @@ path:
   downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
   # relative to working directory
-  processing_queue: "./processing_queues/processing_queue_cmip7_sad.csv"
+  processing_queue: "./processing_queues/processing_queue_sad-testing.csv"
 
 # Retrieving options
 download:
   l_extra_query: False
   max_retries: 3 # optional
-  query_options: "./query_options.txt" # optional. Use only if l_extra_query=True
+  # query_options: "./query_options.txt" # optional. Use only if l_extra_query=True
 
 # Processing options
 convert:
