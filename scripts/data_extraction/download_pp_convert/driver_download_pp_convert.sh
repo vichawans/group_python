@@ -33,6 +33,8 @@ if [[ "$JOB_L_BATCH" = "True" ]]; then
         --time="$SLURM_TIME" \
         --mem="$SLURM_MEMORY" \
         --array="$SLURM_ARRAY_RANGE" \
+		--output="log/driver_%j.out" \
+		--error="log/driver_%j.err" \
         batch_process.sh
 
 fi

@@ -33,14 +33,16 @@ echo "Created/verified directory: $download_dir"
 # submit to mass queue
 # SLURM job submission using config
 slurm_download_job_id=$(sbatch --parsable \
-       --job-name="$jobID $stash pp" \
-       --partition="mass" \
-       --account="mass" \
-       --qos="mass" \
-       retrieve_stash.sh "$jobID" \
-       "$stream" "$stash" "$download_dir" \
-       "$DOWNLOAD_MAX_RETRIES" \
-       "$DOWNLOAD_QUERY_OPTIONS" )
+        --job-name="$jobID $stash pp" \
+        --partition="mass" \
+        --account="mass" \
+        --qos="mass" \
+		--output="log/download_%x_%j.out" \
+		--error="log/download_%x_%j.err" \
+        retrieve_stash.sh "$jobID" \
+        "$stream" "$stash" "$download_dir" \
+        "$DOWNLOAD_MAX_RETRIES" \
+        "$DOWNLOAD_QUERY_OPTIONS" )
 
 echo "Submitted MASS retrieval job with job ID: $slurm_download_job_id"
 echo "jobID=$jobID; stream=$stream; stash=$stash"
@@ -60,7 +62,9 @@ batch_convert_pp () {
         --account=\"$SLURM_ACCOUNT\" \
         --qos=\"$SLURM_QOS\" \
         --time=\"$SLURM_TIME\" \
-        --mem=\"$SLURM_MEMORY\""
+        --mem=\"$SLURM_MEMORY\" \
+		--output=\"log/convert_%j.out\" \
+		--error=\"log/convert_%j.err\" "
 
     # Add dependency if provided
     if [[ -n "$dependent_id" ]]; then
@@ -98,7 +102,9 @@ batch_copy () {
         --account=\"$SLURM_ACCOUNT\" \
         --qos=\"$SLURM_QOS\" \
         --time=\"$SLURM_TIME\" \
-        --mem=\"$SLURM_MEMORY\""
+        --mem=\"$SLURM_MEMORY\" \ 
+		--output=\"log/cp_%j.out\" \
+		--error=\"log/cp_%j.err\" "
 
     # Add dependency if provided
     if [[ -n "$dependent_id" ]]; then
