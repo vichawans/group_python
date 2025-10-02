@@ -2,9 +2,9 @@
 
 This folder contains scripts for streamlining data retrieval from MASS and conversion of pp files to NetCDF files.
 
-This works on JASMIN (and any other system that has access to mass-cli).
+This works on JASMIN [sci servers](https://help.jasmin.ac.uk/docs/interactive-computing/sci-servers/) (and any other servers with access to mass-cli).
 
-This code is hands off and is works in parallel to retrieve pp and convert to NetCDF/zarr files by using scheduling software, `slurm`, so everything runs in parallel on LOTUS compute nodes to speed up conversion.
+This code is hands off and is works in parallel to retrieve pp and convert to NetCDF files by using scheduling software, `slurm`, so everything runs in parallel on LOTUS compute nodes to speed up conversion.
 
 ## Usage
 
@@ -23,12 +23,13 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
    - Note the details of Account and QOS which will be needed to set `config.yaml`
 
    ```bash
-   user@sci-ph-01$ useraccounts
-   # sacctmgr show user fred withassoc format=user,account,qos%-50
-   User       Account        QOS
-   ---------- -------------- -------------------------------------
-       fred  mygws         debug,high,long,short,standard
-       fred  orchid        debug,high,long,short,standard
+    $ useraccounts
+    # sacctmgr show user vs480 withassoc format=user%-15,account%-20,qos%-50
+    User            Account              QOS
+    --------------- -------------------- --------------------------------------------------
+    vs480           acsis                dask,debug,high,long,short,standard
+    vs480           mass                 mass
+    vs480           shobu
    ```
 
 2. Edit or create `processing_queue.csv` file
@@ -68,34 +69,53 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
 
 4. Submit the code from the code directory
 
-On Jasmin, go to this script folder and execute the driver script
+   On Jasmin, go to this script folder and execute the driver script
 
-```bash
-sh driver_download_pp_convert.sh
-```
+   ```bash
+   [vs480@sci-ph-01 download_pp_convert]$ sh driver_download_pp_convert.sh
+   ```
 
-This should output log and error file in the log folder in the current directory.
+   This should spawn a master job, then the master job should spawn
+
+   - downloading: one array job for each row in the processing queue csv file, as directed by array_range.
+   - copying downloaded pp: one array job that depends on the completion of downloading job
+   - converting: one array job for stash. This then spawn one job for each pp file. There will be a lot of jobs.
+   - copying converted file: one array job for each stash. This will wait for the conversion to be done.
 
 5. Monitor the job
+
+Each job has its own log in `log/...`
+
+To monitor slurm jobs, [see here](https://help.jasmin.ac.uk/docs/batch-computing/how-to-monitor-slurm-jobs/).
 
 Auto update
 
 ```bash
-watch squeue --me
+[vs480@sci-ph-01 download_pp_convert]$ watch squeue --me
 ```
 
-print out to terminal once
+Print out to terminal once
 
 ```bash
-squeue --me
+[vs480@sci-ph-01 download_pp_convert]$ squeue --me
 ```
 
-This should spawn a master job, then the master job should spawn
+### Why is my job stuck in pending (PD) state?
 
-- downloading: one array job for each row in the processing queue csv file, as directed by array_range.
-- copying downloaded pp: one array job that depends on the completion of downloading job
-- converting: one array job for stash. This then spawn one job for each pp file. There will be a lot of jobs.
-- copying converted file: one array job for each stash. This will wait for the conversion to be done.
+Note for NODELIST(REASON)
+
+- **Priority**
+  - Explanation: job has lower priority than other jobs in the queue, so the job will not start now.
+  - Solution: Nothing. LOTUS/MASS is busy, just wait for your turn.
+  - If really need to jump the queue
+    1. Switch to qos that has higher priority (`short` has the highest priority on LOTUS. `mass` is the only qos for mass partition).
+    2. Otherwise, lower job walltime to `time`: 1:00:00
+- **Dependency**
+  - Explanation: job depend on another job to finish first.
+  - Solution: Nothing. Just wait for that preceeding job to finish. This applies for copying and coverting
+- **Resources**
+  - Explanation: not enough resources
+  - Solution: Nothing. Just wait for those earlier jobs to finish for your turn. If really need to jump the queue, see jumping queue in Priority above
 
 ---
 
