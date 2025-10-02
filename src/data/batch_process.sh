@@ -102,9 +102,9 @@ batch_copy () {
         --account=\"$SLURM_ACCOUNT\" \
         --qos=\"$SLURM_QOS\" \
         --time=\"$SLURM_TIME\" \
-        --mem=\"$SLURM_MEMORY\" \ 
-		--output=\"log/cp_%j.out\" \
-		--error=\"log/cp_%j.err\" "
+        --mem=\"$SLURM_MEMORY\" \
+        --output=\"log/cp_%j.out\" \
+        --error=\"log/cp_%j.err\" "
 
     # Add dependency if provided
     if [[ -n "$dependent_id" ]]; then
