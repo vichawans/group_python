@@ -30,12 +30,14 @@ for pp_file in $pp_files; do
     
     # Prepare sbatch command
     sbatch_cmd="sbatch --parsable \
-        --job-name=\"convert $pp_file\" \
+        --job-name=\"convert $base_name\" \
         --partition=\"$SLURM_PARTITION\" \
         --account=\"$SLURM_ACCOUNT\" \
         --qos=\"$SLURM_QOS\" \
         --time=\"$SLURM_TIME\" \
-        --mem=\"$SLURM_MEMORY\""
+        --mem=\"$SLURM_MEMORY\" \
+		--output=\"log/convert_%j.out\" \
+		--error=\"log/convert_%j.err\" \ "
 
     echo "Converting $pp_file in $download_dir to $CONVERT_FORMAT file" 
     echo "and save to $converted_dir as $converted_file"
