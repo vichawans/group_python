@@ -5,7 +5,7 @@ job:
   l_download: True
   l_copy_downloaded: False
   l_convert: True
-  l_copy_converted: True
+  l_copy_converted: False
 
 # SLURM settings
 slurm:
@@ -14,7 +14,7 @@ slurm:
   qos: "short"
   time: "1:00:00"
   memory: "200000"
-  array_range: "1-16"
+  array_range: "1-24"
 
 # Paths
 path:
