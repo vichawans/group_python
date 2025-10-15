@@ -116,7 +116,7 @@ Note for NODELIST(REASON)
 - **Resources**
   - Explanation: not enough resources
   - Solution: Nothing. Just wait for those earlier jobs to finish for your turn. If really need to jump the queue, see jumping queue in Priority above
-
+- Others: [See full list of reasons here](https://slurm.schedmd.com/squeue.html#lbAF)
 ---
 
 ## Useful code snippets
