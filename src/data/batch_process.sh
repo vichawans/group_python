@@ -37,6 +37,7 @@ slurm_download_job_id=$(sbatch --parsable \
         --partition="mass" \
         --account="mass" \
         --qos="mass" \
+		--time="$DOWNLOAD_WALLTIME" \
 		--output="log/download_%x_%j.out" \
 		--error="log/download_%x_%j.err" \
         retrieve_stash.sh "$jobID" \

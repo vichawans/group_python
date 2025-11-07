@@ -62,6 +62,7 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
    - `download`:
      - `l_extra_query`: True/False. Set to True if need extra query options. Then specify the query option file below.
      - `max_retries`: 3. Optional. Just in case need more than 3 retries for downloading data from MASS
+     - `walltime`: "24:00:00" Set maximum job download time. Shorter time means the queue gets higher priority
      - `query_options`: "./query_options.txt" optional, for setting extra query options, especially time domain to download, only use if `l_extra_query` is True
    - `convert`:
      - `l_use_downloaded_save_dir`: True/False. Optional. For converting from pp files in `downloaded_save_dir` instead of from `tmp_dir`
@@ -135,6 +136,5 @@ This lists all stash items in each stream in separate text files.
 ## Known problem
 
 - This code will always try to check for download pp `max_retries` times. It's probably better to don't try if the download is not corrupted to be a good MASS citizen...
-- mass download walltime is set to 1 hour. Probably could increase (at the expense of queuing time)
 - working directory in `driver_download_pp_convert.sh` is relative to current directory and is hardcoded. Probably need a better way of doing this.
 - Copying converted nc file does not depend on each nc convert job. That means `l_copy_converted` needs to be False when `l_convert` is True for now.
