@@ -241,5 +241,5 @@ if [[  "$JOB_L_CONVERT" = "False" && $copy_converted = 'True' ]]; then
     batch_copy "$convert_dir" "$converted_save_dir_full"
 fi
 
+echo "Finishd submission: $jobID $stream $stash"
 echo ""
-echo "Finishd submission for: $jobID $stream $stash"
