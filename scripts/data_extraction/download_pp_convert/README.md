@@ -142,6 +142,8 @@ Note for NODELIST(REASON)
 
 ### List all stash id available in a set (a rose suite)
 
+Execute on `mass-cli`
+
 ```bash
 jobid="u-dm931" ## EDIT
 for f in $(moo ls moose:crum/$jobid/*pp); do stream=$(echo $f| cut -d/ -f4 | cut -d. -f1) ; moo mdls --attribute=stash $f>> $jobid_$stream ; done
