@@ -1,10 +1,10 @@
 # Download pp file from MASS and convert to NetCDF files
 
-This folder contains scripts for streamlining data retrieval from MASS and conversion of pp files to NetCDF files.
+This folder contains scripts for streamlining data retrieval from MASS and converting pp files to NetCDF files.
 
 This works on JASMIN [sci servers](https://help.jasmin.ac.uk/docs/interactive-computing/sci-servers/) (and any other servers with access to mass-cli).
 
-This code is hands off and is works in parallel to retrieve pp and convert to NetCDF files by using scheduling software, `slurm`, so everything runs in parallel on LOTUS compute nodes to speed up conversion.
+This code is hands-off and works in parallel to retrieve pp and convert to NetCDF files by using scheduling software, `slurm`. Everything runs in parallel on LOTUS compute nodes to speed up conversion.
 
 ## Usage
 
@@ -32,6 +32,7 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
    vs480           mass                 mass
    vs480           shobu
    ```
+   - Note the details of Account and QOS which will be needed to set `config.yaml`
 
 2. Edit or create `processing_queue.csv` file
 
@@ -39,7 +40,7 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
    - I find it helpful to create the csv in external point-and-click software like Excel/Google Sheets and export as csv files.
    - See [useful code snippets](#useful-code-snippets) for how to check the available stashes in a suite
 
-3. Edit `config.yaml`. This file sets how to run the script for each colum of `processing_queue.csv`.
+3. Edit `config.yaml`. This file sets how to run the script for each column of `processing_queue.csv`.
 
    - `job`:
      - `name`: "AAAAA" Job name for slurm. (Any string is fine; this is for user comment.)
@@ -56,10 +57,10 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
      - `memory`: "200000". [See JASMIN documentation](https://help.jasmin.ac.uk/docs/batch-computing/how-to-submit-a-job/).
      - `array_range`: "1-6". Set array range in `processing_queue.csv` to execute the code. This does not have to be the whole range of csv and does not have to be continuous. e.g. '1,4,10-13' is acceptable.
    - `path`:
-     - `tmp_dir`: "/work/scratch-pw2/\<USERNAME>" the usual scrath location for a user. Use disk with parallel write access for speed.
+     - `tmp_dir`: "/work/scratch-pw2/\<USERNAME>" the usual scrath location for a user. Use a disk with parallel write access for speed.
      - `downloaded_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing pp files long-term
      - `converted_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing converted files long-term
-     - `processing_queue`: "./processing_queues/processing_queue.csv" . Relative or absolute path to the `processing_queue.csv`. Name can be changed to submit different queues. Do not forget to set `array_range` to customise the array job.
+     - `processing_queue`: "./processing_queues/processing_queue.csv" . Relative or absolute path to the `processing_queue.csv`. The name can be changed to submit to different queues. Do not forget to set `array_range` to customise the array job.
    - `download`:
      - `l_extra_query`: True/False. Set to True if need extra query options. Then specify the query option file below.
      - `max_retries`: 3. Optional. Just in case need more than 3 retries for downloading data from MASS
@@ -71,17 +72,17 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
 
 4. Execute the code from the code directory
 
-   On Jasmin, go to this script folder and execute the driver script
+   On Jasmin, go to this script folder and execute the driver script.
 
    ```bash
    [vs480@sci-ph-01 download_pp_convert]$ sh driver_download_pp_convert.sh
    ```
 
-   This should spawn a master job, then the master job should spawn
+   This should spawn a master job, then the master job should spawn.
 
-   - downloading: one array job for each row in the processing queue csv file, as directed by array_range.
-   - copying downloaded pp: one array job that depends on the completion of downloading job
-   - converting: one array job for stash. This then spawn one job for each pp file. There will be a lot of jobs.
+   - downloading: one array job for each row in the processing queue CSV file, as directed by array_range.
+   - copying downloaded pp: one array job that depends on the completion of the downloading job
+   - converting: one array job for stash. This then spawns one job for each pp file. There will be a lot of jobs.
    - copying converted file: one array job for each stash. This will wait for the conversion to be done.
 
 5. Monitor the job
@@ -118,14 +119,14 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
 Note for NODELIST(REASON)
 
 - **Priority**
-  - Explanation: job has lower priority than other jobs in the queue, so the job will not start now.
+  Explanation: This job has a lower priority than other jobs in the queue, so it will not start now.
   - Solution: Nothing. LOTUS/MASS is busy, just wait for your turn.
   - If really need to jump the queue
     1. Switch to qos that has higher priority (`short` has the highest priority on LOTUS. `mass` is the only qos for mass partition).
     2. Otherwise, lower job walltime using `config.yaml` `time` and `walltime`. 1:00:00 means 1 hour
 - **Dependency**
-  - Explanation: job depend on another job to finish first.
-  - Solution: Nothing. Just wait for that preceeding job to finish. This applies for copying and coverting
+  - Explanation: A job depends on finishing another job first.
+  - Solution: Nothing. Just wait for that preceding job to finish. This applies to copying and converting
 - **Resources**
   - Explanation: not enough resources
   - Solution: Nothing. Just wait for those earlier jobs to finish for your turn. If really need to jump the queue, see jumping queue in Priority above
@@ -150,6 +151,21 @@ for f in $(moo ls moose:crum/$jobid/*pp); do stream=$(echo $f| cut -d/ -f4 | cut
 ```
 
 This lists all stash items in each stream in separate text files.
+
+### Check the limit of each QOS 
+   
+```bash
+   $ sacctmgr show qos format=name,priority,maxtrespj%20,maxtrespu%20,maxwall
+      Name   Priority              MaxTRES            MaxTRESPU     MaxWall 
+---------- ---------- -------------------- -------------------- ----------- 
+  standard        500      cpu=16,mem=128G             cpu=4000  1-00:00:00 
+      long        350      cpu=16,mem=128G             cpu=1350  5-00:00:00 
+     short        550       cpu=8,mem=200G             cpu=2000    04:00:00 
+     debug        500                                    cpu=50    01:00:00 
+      dask        500                                    cpu=16             
+      mass        500                                                       
+      high        450     cpu=96,mem=1000G    cpu=576,mem=4500G  2-00:00:00 
+```
 
 ---
 
