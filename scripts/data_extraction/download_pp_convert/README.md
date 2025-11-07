@@ -135,5 +135,6 @@ This lists all stash items in each stream in separate text files.
 ## Known problem
 
 - This code will always try to check for download pp `max_retries` times. It's probably better to don't try if the download is not corrupted to be a good MASS citizen...
+- mass download walltime is set to 1 hour. Probably could increase (at the expense of queuing time)
 - working directory in `driver_download_pp_convert.sh` is relative to current directory and is hardcoded. Probably need a better way of doing this.
-- Copying converted nc file does not depend on each nc convert job. That means l_copy_converted needs to be False when l_convert is True for now.
+- Copying converted nc file does not depend on each nc convert job. That means `l_copy_converted` needs to be False when `l_convert` is True for now.
