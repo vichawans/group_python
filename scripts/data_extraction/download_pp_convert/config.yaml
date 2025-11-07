@@ -12,9 +12,9 @@ slurm:
   account: "acsis"
   partition: "standard"
   qos: "short"
-  time: "1:00:00"
+  time: "2:00:00"
   memory: "200000"
-  array_range: "1-24"
+  array_range: "1-20"
 
 # Paths
 path:
