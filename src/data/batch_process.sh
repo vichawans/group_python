@@ -37,6 +37,7 @@ slurm_download_job_id=$(sbatch --parsable \
         --partition="mass" \
         --account="mass" \
         --qos="mass" \
+		--time="$DOWNLOAD_WALLTIME" \
 		--output="log/download_%x_%j.out" \
 		--error="log/download_%x_%j.err" \
         retrieve_stash.sh "$jobID" \
@@ -241,5 +242,5 @@ if [[  "$JOB_L_CONVERT" = "False" && $copy_converted = 'True' ]]; then
     batch_copy "$convert_dir" "$converted_save_dir_full"
 fi
 
+echo "Finishd submission: $jobID $stream $stash"
 echo ""
-echo "Finishd submission for: $jobID $stream $stash"
