@@ -88,7 +88,7 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
 
    Each job has its own log in `log/...`
 
-   To monitor slurm jobs, [see here](https://help.jasmin.ac.uk/docs/batch-computing/how-to-monitor-slurm-jobs/).
+   To monitor slurm jobs, [see JASMIN documentation](https://help.jasmin.ac.uk/docs/batch-computing/how-to-monitor-slurm-jobs/).
 
    Example command and output
 
