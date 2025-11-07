@@ -14,7 +14,7 @@ slurm:
   qos: "short"
   time: "2:00:00"
   memory: "200000"
-  array_range: "1-20"
+  array_range: "1-5"
 
 # Paths
 path:
@@ -22,7 +22,7 @@ path:
   downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
   # relative to working directory
-  processing_queue: "./processing_queues/processing_queue_sad-testing.csv"
+  processing_queue: "./processing_queues/processing_queue_acsis_exp11_n2o5.csv"
 
 # Retrieving options
 download:
