@@ -4,13 +4,13 @@
 
 import os
 import sys
+import xarray as xr
 
 proj_path = os.path.abspath(os.path.join(".."))
 if proj_path not in sys.path:
     sys.path.append(proj_path)
 
-import xarray as xr
-from src.config.proj_defs import rename_vars, data_paths
+from config.proj_defs import rename_vars, data_paths
 
 
 def load_grids(
