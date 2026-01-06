@@ -22,7 +22,7 @@ path:
   downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
   # relative to working directory
-  processing_queue: "./processing_queues/processing_queue_acsis_exp11_strat_het.csv"
+  processing_queue: "../../../informal/vs480/processing_queues/processing_queue_acsis_exp11_strat_het.csv"
 
 # Retrieving options
 download:
