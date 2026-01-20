@@ -38,3 +38,5 @@ if [[ "$JOB_L_BATCH" = "True" ]]; then
         batch_process.sh
 
 fi
+
+echo "Execute command 'squeue --me' to see all the submitted job."
