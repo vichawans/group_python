@@ -39,4 +39,4 @@ if [[ "$JOB_L_BATCH" = "True" ]]; then
 
 fi
 
-echo "Execute command 'squeue --me' to see all the submitted job."
+echo "Execute command 'squeue --me' to monitor all the submitted job."
