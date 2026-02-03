@@ -7,14 +7,19 @@
 yaml_file='./config.yaml'
 proj_dir='../../../'
 
-# set project paths
+# set project paths. This script depends on other code in src/data and src/util in this repo
 export SRC_DATA_DIR="${proj_dir}/src/data"
 export UTIL_DIR="${proj_dir}/src/util"
 export PATH="$UTIL_DIR:$SRC_DATA_DIR:$PATH"
 
+# Set tmpdir to log, in case this is not set
+if [[ -z $TMPDIR ]]; then
+    TMPDIR='./log/'
+fi
+
+tmp_env=$(mktemp -p "$TMPDIR" env_XXXXXX.sh)
 
 # Load variables from yaml file
-tmp_env=$(mktemp -p "$TMPDIR" env_XXXXXX.sh)
 python3 "${UTIL_DIR}/yaml_to_shell.py" $yaml_file > "$tmp_env"
 
 # shellcheck disable=SC1090

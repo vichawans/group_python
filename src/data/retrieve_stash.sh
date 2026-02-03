@@ -19,12 +19,12 @@
 
 # Edit the try loop (imax) to change the number of attempts if needed.
 
-# Usage: sh retrieve_pp.sh $jobID $stream $stash $download_dir $imax (optional) $queries
+# Usage: [on mass-cli] sh retrieve_pp.sh $jobID $stream $stash $download_dir (optional) $imax $queries
 
 jobID=$1 # e.g. u-cu594
 stream=$2 # e.g. ap4.pp
 stash=$3 # e.g. 38285
-download_dir=$4 # e.g. /work/scratch-pw2/vs480/pp_files/$jobID/${jobID}_${stream}_${stash}
+download_dir=$4 # e.g. /work/scratch-pw5/vs480/pp_files/$jobID/${jobID}_${stream}_${stash}
 imax=${5:-"3"} # default = 3
 queries=${6:-""} # default is empty
 
@@ -67,8 +67,6 @@ until [ $i -gt "$imax" ]; do
   echo "  moo select --fill-gaps-and-overwrite-smaller-files $query_file moose:crum/$jobID/$stream ./"
   moo select --fill-gaps-and-overwrite-smaller-files $query_file moose:crum/"$jobID"/"$stream" ./ 
   ((i++))
-
-  sleep 10s # wait before issuing the next request
 done
 
 echo ""
