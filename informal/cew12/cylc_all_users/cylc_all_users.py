@@ -6,13 +6,22 @@ Examines state of jobs for all users
 
 
 import argparse
+import re
 import requests
 
 
 def main(args):
+    base_url = "http://" + args.server + ":" + args.port
     user_list = load_users(args.user_list)
-    active_users = detect_active_users(user_list, args)
-    print(f"List of active users: {active_users}")
+    active_user_suite_pages = get_active_user_suite_pages(user_list, base_url)
+    print(f"List of active users: {active_user_suite_pages.keys()}")
+    active_jobs_by_user = {}
+    for username, suite_page in active_user_suite_pages.items():
+        active_jobs = get_active_jobs_by_user(username, suite_page, base_url)
+        num_active_jobs=len(active_jobs)
+        if num_active_jobs > 0:
+            active_jobs_by_user[username] = active_jobs
+            print(f"{username} has {num_active_jobs} listed jobs")
     pass
 
 
@@ -32,11 +41,13 @@ def load_users(user_file_path):
     return all_users_trimmed
 
 
-def detect_active_users(user_list, args):
-    """Establish which users have useful output in cylc GUI"""
+def get_active_user_suite_pages(user_list, base_url):
+    """Establish which users have useful output in cylc GUI
+       and fetch their top-level suite page.
+       NOTE: defaults to 100/page, don't know how to fetch
+       the rest as yet."""
 
-    base_url = "http://" + args.server + ":" + args.port
-    active_users = []
+    active_use_suite_pages = {}
     for username in user_list:
         request_params = {'user' : username}
 
@@ -53,9 +64,19 @@ def detect_active_users(user_list, args):
             continue
 
         print(f"Found active user: {username}")
-        active_users.append(username)
+        active_use_suite_pages[username] = page_response.text
 
-    return active_users
+        if len(active_use_suite_pages) >= 500:
+            break # debug speed-up
+
+    return active_use_suite_pages
+
+
+# To match e.g. 'suite=u-dj365">task jobs list'
+suite_matcher = re.compile(r'suite=([a-zA-Z0-9_/%-]+)">task jobs list')
+def get_active_jobs_by_user(username, suite_page, args):
+    suite_ids = suite_matcher.findall(suite_page)
+    return suite_ids
 
 
 if __name__ == "__main__":
