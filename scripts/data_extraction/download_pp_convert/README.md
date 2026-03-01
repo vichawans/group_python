@@ -149,6 +149,12 @@ for f in $(moo ls moose:crum/$jobid/*pp); do stream=$(echo $f| cut -d/ -f4 | cut
 
 This lists all stash items in each stream in separate text files.
 
+### Check available nodes in LOTUS
+
+```bash
+  sinfo
+```
+
 ### Check the limit of each QOS
 
 ```bash
