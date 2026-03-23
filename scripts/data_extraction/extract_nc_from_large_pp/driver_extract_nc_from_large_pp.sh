@@ -26,6 +26,28 @@ python3 "${UTIL_DIR}/yaml_to_shell.py" "$yaml_file" > "$tmp_env"
 # shellcheck disable=SC1090
 source "$tmp_env"
 
+# Validate processing_queue file
+if [[ ! -f "$PATHS_PROCESSING_QUEUE" ]]; then
+    echo "ERROR: Processing queue file not found: $PATHS_PROCESSING_QUEUE"
+    exit 1
+fi
+
+# Check that processing_queue has valid format and entries
+num_lines=$(wc -l < "$PATHS_PROCESSING_QUEUE")
+max_array=$(echo "$SLURM_ARRAY_RANGE" | awk -F'[-,]' '{print $NF}')
+
+if [[ $num_lines -lt $max_array ]]; then
+    echo "ERROR: Processing queue has $num_lines lines but array_range requests up to $max_array"
+    echo "       Update SLURM_ARRAY_RANGE in config.yaml to match processing_queue.csv"
+    exit 1
+fi
+
+echo "Processing queue validation: PASSED"
+echo "  File: $PATHS_PROCESSING_QUEUE"
+echo "  Total lines: $num_lines"
+echo "  Array range: $SLURM_ARRAY_RANGE"
+echo ""
+
 # Create log directory if it doesn't exist
 mkdir -p "./log"
 
