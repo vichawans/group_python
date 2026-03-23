@@ -33,7 +33,7 @@ echo "Created/verified directory: $download_dir"
 # submit to mass queue
 # SLURM job submission using config
 slurm_download_job_id=$(sbatch --parsable \
-        --job-name="$jobID $stash pp" \
+        --job-name="$jobID-$stash-pp" \
         --partition="mass" \
         --account="mass" \
         --qos="mass" \

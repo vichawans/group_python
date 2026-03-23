@@ -85,14 +85,21 @@ def load_um_data(data_path, stash_list, engine="zarr", rename=True):
     print(f"Loading files from {data_path} with stashes {stash_list}")
     file_list = [
         xr.open_mfdataset(
-            f, engine=engine, concat_dim="time", combine="nested", parallel=True
+            f,
+            engine=engine,
+            concat_dim="time",
+            combine="nested",
+            parallel=True,
         )
         for f in filename_glob
     ]
 
     # combine files into a single dataset and sort by time
     dataset = xr.combine_by_coords(
-        file_list, join="outer", combine_attrs="drop_conflicts"
+        # compat="override",
+        file_list,
+        join="outer",
+        combine_attrs="drop_conflicts",
     ).sortby("time")
 
     if rename:
@@ -112,8 +119,8 @@ def load_um_data(data_path, stash_list, engine="zarr", rename=True):
             dataset = dataset.rename(filtered_vars)
 
         # add grid data (can only be done after renaming coordinates)
-        grids = load_grids()
-        dataset = dataset.merge(grids)
+        # grids = load_grids()
+        # dataset = dataset.merge(grids)
 
     return dataset
 
