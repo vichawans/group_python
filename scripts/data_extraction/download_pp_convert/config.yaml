@@ -1,6 +1,6 @@
 # Job controls
 job:
-  name: "UKESM_data_download"
+  name: "TWISTA"
   l_batch: True
   l_download: True
   l_copy_downloaded: False
@@ -14,23 +14,23 @@ slurm:
   qos: "short"
   time: "10:00"
   memory: "2000"
-  array_range: "1-72"
+  array_range: "1-48"
 
 # Paths
 path:
   tmp_dir: "/work/scratch-pw5/vs480"
   downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
-  processing_queue: "../../../informal/vs480/processing_queues/processing_queue_n2o5_noy_yao.csv" # relative to working directory
+  processing_queue: "../../../informal/vs480/processing_queues/processing_queue_TWISTA.csv" # relative to working directory
 
 # Retrieving options
 download:
   l_extra_query: False
   max_retries: 3 # optional
-  walltime: "1:00:00"
+  walltime: "4:00:00"
   # query_options: "./query_options.txt" # optional. Use only if l_extra_query=True
 
 # Processing options
 convert:
   l_use_downloaded_save_dir: False # optional. For converting from pp files in downloaded_save_dir
-  format: "nc" # 'nc' or 'zarr'
+  format: "nc" # 'nc' or 'zarr'. only 'nc' is available now
