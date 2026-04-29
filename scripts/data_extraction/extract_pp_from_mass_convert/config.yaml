@@ -2,8 +2,8 @@
 job:
   name: "N2O5 fix"
   l_batch: True
-  l_download: True
-  l_copy_downloaded: False
+  l_extract: True
+  l_copy_extracted: False
   l_convert: True
   l_copy_converted: False
 
@@ -19,12 +19,12 @@ slurm:
 # Paths
 path:
   tmp_dir: "/work/scratch-pw5/vs480"
-  downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
+  extracted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
   processing_queue: "../../../informal/vs480/processing_queues/processing_queue_n2o5_noy_yao_fix.csv" # relative to working directory
 
-# Retrieving options
-download:
+# MASS extracting options
+extract:
   l_extra_query: False
   max_retries: 3 # optional
   walltime: "4:00:00"
@@ -32,5 +32,5 @@ download:
 
 # Processing options
 convert:
-  l_use_downloaded_save_dir: False # optional. For converting from pp files in downloaded_save_dir
+  l_use_extracted_save_dir: False # optional. For converting from pp files in downloaded_save_dir
   format: "nc" # 'nc' or 'zarr'. only 'nc' is available now

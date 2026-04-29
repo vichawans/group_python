@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # This script reads in configuration from yaml file and sends information to 
-# batch download pp and conversion
+# batch download pp and conversion.
+# This script depends on other sources in this repository
 
 # USER EDIT
 yaml_file='./config.yaml'
