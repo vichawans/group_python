@@ -1,6 +1,6 @@
 # Job controls
 job:
-  name: "TWISTA"
+  name: "N2O5 fix"
   l_batch: True
   l_download: True
   l_copy_downloaded: False
@@ -14,14 +14,14 @@ slurm:
   qos: "short"
   time: "10:00"
   memory: "2000"
-  array_range: "1-48"
+  array_range: "1"
 
 # Paths
 path:
   tmp_dir: "/work/scratch-pw5/vs480"
   downloaded_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
-  processing_queue: "../../../informal/vs480/processing_queues/processing_queue_TWISTA.csv" # relative to working directory
+  processing_queue: "../../../informal/vs480/processing_queues/processing_queue_n2o5_noy_yao_fix.csv" # relative to working directory
 
 # Retrieving options
 download:
