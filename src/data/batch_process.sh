@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=dl_pp
+#SBATCH --job-name=ext_pp_cov
 #SBATCH --account=acsis
 #SBATCH --partition=debug # standard or debug
 #SBATCH --qos=debug
