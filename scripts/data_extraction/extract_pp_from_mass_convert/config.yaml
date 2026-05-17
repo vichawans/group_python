@@ -2,7 +2,7 @@
 job:
   name: "N2O5 fix"
   l_batch: True
-  l_extract: True
+  l_extract: False
   l_copy_extracted: False
   l_convert: True
   l_copy_converted: False
@@ -14,7 +14,9 @@ slurm:
   qos: "short"
   time: "10:00"
   memory: "2000"
-  array_range: "1"
+
+jobs:
+  array_range: "10,13,17"
 
 # Paths
 path:

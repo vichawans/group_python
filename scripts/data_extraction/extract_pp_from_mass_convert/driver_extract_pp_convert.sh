@@ -34,22 +34,22 @@ fi
 
 # Check that processing_queue has valid format and entries
 num_lines=$(wc -l < "$PATH_PROCESSING_QUEUE")
-max_array=$(echo "$SLURM_ARRAY_RANGE" | awk -F'[-,]' '{print $NF}')
+max_array=$(echo "$JOBS_ARRAY_RANGE" | awk -F'[-,]' '{print $NF}')
 
 if [[ $num_lines -lt $max_array ]]; then
     echo "ERROR: Processing queue has $num_lines lines but array_range requests up to $max_array"
-    echo "       Update SLURM_ARRAY_RANGE in config.yaml to match processing_queue.csv"
+    echo "       Update JOBS_ARRAY_RANGE in config.yaml to match processing_queue.csv"
     exit 1
 fi
 
 echo "Processing queue validation: PASSED"
 echo "  File: $PATH_PROCESSING_QUEUE"
 echo "  Total lines: $num_lines"
-echo "  Array range: $SLURM_ARRAY_RANGE"
+echo "  Array range: $JOBS_ARRAY_RANGE"
 echo ""
 
 # This submit N jobs, where N=number of each array job set 
-# by slurm_array_range in config.yaml
+# by JOBS_ARRAY_RANGE in config.yaml
 
 if [[ "$JOB_L_BATCH" = "True" ]]; then
 
@@ -60,11 +60,16 @@ if [[ "$JOB_L_BATCH" = "True" ]]; then
         --qos="$SLURM_QOS" \
         --time="$SLURM_TIME" \
         --mem="$SLURM_MEMORY" \
-        --array="$SLURM_ARRAY_RANGE" \
+        --array="$JOBS_ARRAY_RANGE" \
 		--output="log/driver_%j.out" \
 		--error="log/driver_%j.err" \
         batch_process.sh
 
+	echo "Execute command 'squeue --me' to monitor all the submitted job."
+	
+else
+	echo "interactive shell session for extraction from MASS only"
+	max_jobs=6
+	
+	sh submit_to_mass-cli.sh "$max_jobs" "$JOBS_ARRAY_RANGE"
 fi
-
-echo "Execute command 'squeue --me' to monitor all the submitted job."

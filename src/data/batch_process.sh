@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=ext_pp_cov
+#SBATCH --job-name=MASS_extract
 #SBATCH --account=acsis
 #SBATCH --partition=debug # standard or debug
 #SBATCH --qos=debug
@@ -40,12 +40,12 @@ slurm_extract_job_id=$(sbatch --parsable \
 		--time="$EXTRACT_WALLTIME" \
 		--output="log/extract_%x_%j.out" \
 		--error="log/extract_%x_%j.err" \
-        extract_stash.sh "$jobID" \
+        retrieve_stash.sh "$jobID" \
         "$stream" "$stash" "$tmp_pp_dir" \
         "$EXTRACT_MAX_RETRIES" \
         "$EXTRACT_QUERY_OPTIONS" )
 
-echo "Submitted extraction job with job ID: $slurm_extract_job_id"
+echo "Submitted MASS extraction job with job ID: $slurm_extract_job_id"
 echo "jobID=$jobID; stream=$stream; stash=$stash"
 
 return "$slurm_extract_job_id"
