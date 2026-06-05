@@ -2,7 +2,7 @@
 job:
   name: "N2O5 fix"
   l_batch: True
-  l_extract: False
+  l_extract: True
   l_copy_extracted: False
   l_convert: True
   l_copy_converted: False
@@ -16,14 +16,14 @@ slurm:
   memory: "2000"
 
 jobs:
-  array_range: "55-72"
+  array_range: "1-2"
 
 # Paths
 path:
   tmp_dir: "/work/scratch-pw5/vs480"
   extracted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
-  processing_queue: "../../../informal/vs480/processing_queues/processing_queue_n2o5_noy_yao_fix.csv" # relative to working directory
+  processing_queue: "/home/users/vs480/git/group_python/informal/vs480/processing_queues/processing_queue_acsis_exp11_so2_oh.csv" # relative to working directory
 
 # MASS extracting options
 extract:
