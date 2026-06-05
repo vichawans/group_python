@@ -9,7 +9,7 @@
 #SBATCH --array=1-4 # edit to match the range in array_stream_stash.txt. This can select only the lines needed
 #SBATCH --mem=200000
 
-# driver script to batch extract pp files using retrieve_stash.sh
+# driver script to batch extract pp files using extract_stash.sh
 # Note that command-line arguments to sbatch (like --job-name, --partition, etc.) 
 # override the preceeding #SBATCH directives in this script.
 
@@ -40,7 +40,7 @@ slurm_extract_job_id=$(sbatch --parsable \
 		--time="$EXTRACT_WALLTIME" \
 		--output="log/extract_%x_%j.out" \
 		--error="log/extract_%x_%j.err" \
-        retrieve_stash.sh "$jobID" \
+        extract_stash.sh "$jobID" \
         "$stream" "$stash" "$tmp_pp_dir" \
         "$EXTRACT_MAX_RETRIES" \
         "$EXTRACT_QUERY_OPTIONS" )
