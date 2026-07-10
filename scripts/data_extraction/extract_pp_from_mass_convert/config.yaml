@@ -1,6 +1,6 @@
 # Job controls
 job:
-  name: "N2O5 fix"
+  name: "extract_pp"
   l_batch: True
   l_extract: True
   l_copy_extracted: False
@@ -16,20 +16,20 @@ slurm:
   memory: "2000"
 
 jobs:
-  array_range: "1-2"
+  array_range: "1-143"
 
 # Paths
 path:
   tmp_dir: "/work/scratch-pw5/vs480"
   extracted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
-  processing_queue: "/home/users/vs480/git/group_python/informal/vs480/processing_queues/processing_queue_acsis_exp11_so2_oh.csv" # relative to working directory
+  processing_queue: "/home/users/vs480/git/group_python/informal/vs480/processing_queues/processing_queue_DEST-flux-diags.csv" # absolute path or relative to working directory
 
 # MASS extracting options
 extract:
   l_extra_query: False
-  max_retries: 3 # optional
-  walltime: "4:00:00"
+  max_retries: 2 # optional
+  walltime: "2:00:00"
   # query_options: "./query_options.txt" # optional. Use only if l_extra_query=True
 
 # Processing options

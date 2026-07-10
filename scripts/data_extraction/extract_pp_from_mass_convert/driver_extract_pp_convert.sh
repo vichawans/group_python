@@ -4,14 +4,17 @@
 # batch download pp and conversion.
 # This script depends on other sources in this repository
 
-# USER EDIT
+# USER EDIT -------------------------------------------------------------------
 yaml_file='./config.yaml'
 proj_dir='../../../'
 
-# set project paths. This script depends on other code in src/data and src/util in this repo
+# set project paths. This script depends on other code in 
+# src/data and src/util in this repo
 export SRC_DATA_DIR="${proj_dir}/src/data"
 export UTIL_DIR="${proj_dir}/src/util"
 export PATH="$UTIL_DIR:$SRC_DATA_DIR:$PATH"
+
+# END USER EDIT ---------------------------------------------------------------
 
 # Set tmpdir to log, in case this is not set
 if [[ -z $TMPDIR ]]; then
@@ -52,7 +55,6 @@ echo ""
 # by JOBS_ARRAY_RANGE in config.yaml
 
 if [[ "$JOB_L_BATCH" = "True" ]]; then
-
     sbatch \
         --job-name="$JOB_NAME" \
         --partition="$SLURM_PARTITION" \

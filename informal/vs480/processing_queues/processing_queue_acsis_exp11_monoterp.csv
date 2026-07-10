@@ -23,3 +23,9 @@ task_id,job_id,stream,stashID
 22,u-bv828,apy.pp,50261
 23,u-bv828,apy.pp,50262
 24,u-bv828,apy.pp,50655
+25,u-bv828,apm.pp,50147, monoterp+OH
+26,u-bv828,apm.pp,50148, monoterp+O3
+27,u-bv828,apm.pp,50149, monoterp+NO3
+28,u-bv828,apy.pp,50147, monoterp+OH
+29,u-bv828,apy.pp,50148, monoterp+O3
+30,u-bv828,apy.pp,50149, monoterp+NO3
