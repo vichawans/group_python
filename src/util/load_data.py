@@ -58,7 +58,7 @@ def load_grids(
     return grids
 
 
-def load_um_data(data_path, stash_list, engine="zarr", rename=True):
+def load_um_data(data_path, stash_list, engine="netcdf4", rename=True):
     """
     Load stashes in stash_list data in data_path into xarray dataset.
 
