@@ -16,14 +16,14 @@ slurm:
   memory: "2000"
 
 jobs:
-  array_range: "80-88"
+  array_range: "1-18"
 
 # Paths
 path:
   tmp_dir: "/work/scratch-pw5/vs480"
   extracted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
-  processing_queue: "/home/users/vs480/git/group_python/informal/vs480/processing_queues/processing_queue_TWISTA_u-eb388.csv" # absolute path or relative to working directory
+  processing_queue: "/home/users/vs480/git/group_python/informal/vs480/processing_queues/processing_queue_hono2-dep-0.csv" # absolute path or relative to working directory
 
 # MASS extracting options
 extract:

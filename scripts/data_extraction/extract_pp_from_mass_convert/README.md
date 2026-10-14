@@ -1,4 +1,4 @@
-# Download pp file from MASS and convert to NetCDF files
+# Extract pp file from MASS and convert to NetCDF files
 
 This folder contains scripts for streamlining data retrieval from MASS and converting pp files to NetCDF files. The script depends on other codes in `src/data` and `src/util`.
 
@@ -8,11 +8,11 @@ This code is hands-off and works in parallel to retrieve pp and convert to NetCD
 
 ## Usage
 
-Main script, `driver_download_pp_convert.sh` should be run locally on a sci machine of Jasmin.
+Main script, `driver_extract_pp_convert.sh` should be run locally on a sci or a vm machine of Jasmin.
 
 This script will submit other scripts to slurm queuing system using `sbatch` for each stash in a user-defined list, genrally called `processing_queue.csv`. Each slurm array job for each stash is executed in parallel.
 
-Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml` to set the job details and monitor job status.
+Before executing `driver_extract_pp_convert.sh`, user should edit `config.yaml` to set the job details and monitor job status.
 
 ### Steps for using the script
 
@@ -35,7 +35,7 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
    - Note the details of Account and QOS which will be needed to set `config.yaml`
 
 2. Edit or create `processing_queue.csv` file
-   - This is for sbatch to parallelize the download for each stash. The file should contain 4 columns: `task_id`, `job_id`, `stream`, and `stash`. See `processing_queues/processing_queue.csv` for an example.
+   - This is for sbatch to parallelize the extract for each stash. The file should contain 4 columns: `task_id`, `job_id`, `stream`, and `stash`. See `processing_queues/processing_queue.csv` for an example.
    - I find it helpful to create the csv in external point-and-click software like Excel/Google Sheets and export as csv files.
    - See [useful code snippets](#useful-code-snippets) for how to check the available stashes in a suite
 
@@ -43,8 +43,8 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
    - `job`:
      - `name`: "AAAAA" Job name for slurm. (Any string is fine; this is for user comment.)
      - `l_batch`: True/False. Must be True for now as the code only accept sbatch execution.
-     - `l_download`: True/False. Set to True if downloading stash items.
-     - `l_copy_downloaded`: True/False. Set to True if copying the pp files for each stash items from tmp to other directory.
+     - `l_extract`: True/False. Set to True if extracting stash items.
+     - `l_copy_extracted`: True/False. Set to True if copying the pp files for each stash items from tmp to other directory.
      - `l_convert`: True/False. Set to True of converting pp to nc or zarr. See convert section below.
      - `l_copy_converted`: True/False. Set to True if copying the converted stash items from tmp to other directory.
    - `slurm`:
@@ -56,16 +56,16 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
      - `array_range`: "1-6". Set array range in `processing_queue.csv` to execute the code. This does not have to be the whole range of csv and does not have to be continuous. e.g. '1,4,10-13' is acceptable.
    - `path`:
      - `tmp_dir`: "/work/scratch-pw2/\<USERNAME>" the usual scrath location for a user. Use a disk with parallel write access for speed.
-     - `downloaded_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing pp files long-term
+     - `extracted_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing pp files long-term
      - `converted_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing converted files long-term
      - `processing_queue`: "./processing_queues/processing_queue.csv" . Relative or absolute path to the `processing_queue.csv`. The name can be changed to submit to different queues. Do not forget to set `array_range` to customise the array job.
-   - `download`:
+   - `extract`:
      - `l_extra_query`: True/False. Set to True if need extra query options. Then specify the query option file below.
-     - `max_retries`: 3. Optional. Just in case need more than 3 retries for downloading data from MASS
-     - `walltime`: "24:00:00" Set maximum job download time. Shorter time means the queue gets higher priority
-     - `query_options`: "./query_options.txt" optional, for setting extra query options, especially time domain to download, only use if `l_extra_query` is True
+     - `max_retries`: 3. Optional. Just in case need more than 3 retries for extracting data from MASS
+     - `walltime`: "24:00:00" Set maximum job extract time. Shorter time means the queue gets higher priority
+     - `query_options`: "./query_options.txt" optional, for setting extra query options, especially time domain to extract, only use if `l_extra_query` is True
    - `convert`:
-     - `l_use_downloaded_save_dir`: True/False. Optional. For converting from pp files in `downloaded_save_dir` instead of from `tmp_dir`
+     - `l_use_extracted_save_dir`: True/False. Optional. For converting from pp files in `extracted_save_dir` instead of from `tmp_dir`
      - `format`: "nc"/"zarr" case sensitive (untested). Only nc is working now.
 
 4. Execute the code from the code directory
@@ -73,12 +73,12 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
    On Jasmin, go to this script folder and execute the driver script.
 
    ```bash
-   [vs480@sci-ph-01 download_pp_convert]$ sh driver_download_pp_convert.sh
+   [vs480@sci-ph-01 extract_pp_convert]$ sh driver_extract_pp_convert.sh
    ```
 
    This should spawn a master job, then the master job should spawn.
-   - downloading: one array job for each row in the processing queue CSV file, as directed by array_range.
-   - copying downloaded pp: one array job that depends on the completion of the downloading job
+   - extracting: one array job for each row in the processing queue CSV file, as directed by array_range.
+   - copying extracted pp: one array job that depends on the completion of the extracting job
    - converting: one array job for stash. This then spawns one job for each pp file. There will be a lot of jobs.
    - copying converted file: one array job for each stash. This will wait for the conversion to be done.
 
@@ -108,7 +108,7 @@ Before executing `driver_download_pp_convert.sh`, user should edit `config.yaml`
    Auto update
 
    ```bash
-   [vs480@sci-ph-01 download_pp_convert]$ watch squeue --me
+   [vs480@sci-ph-01 extract_pp_convert]$ watch squeue --me
    ```
 
 ### Understanding the queue: why is my job stuck in pending (PD) state?
@@ -174,7 +174,7 @@ This lists all stash items in each stream in separate text files.
 
 ## Known problem
 
-- This code will always try to check for download pp `max_retries` times. It's probably better to don't try if the download is not corrupted to be a good MASS citizen...
-- working directory in `driver_download_pp_convert.sh` is relative to current directory and is hardcoded. Probably need a better way of doing this.
+- This code will always try to check for extract pp `max_retries` times. It's probably better to don't try if the extract is not corrupted to be a good MASS citizen...
+- working directory in `driver_extract_pp_convert.sh` is relative to current directory and is hardcoded. Probably need a better way of doing this.
 - Copying converted nc file does not depend on each nc convert job. That means `l_copy_converted` needs to be False when `l_convert` is True for now.
 - This code may be too parallel when converting each pp file. It produces too many log files. It may be useful to group together conversion log files.

@@ -1,0 +1,20 @@
+task_id,job_id,stream,stashID
+1,u-dy039,apm.pp,34059,O3P
+2,u-dy039,apm.pp,34997,O1D
+3,u-dy039,apm.pp,34001,O3
+4,u-dy039,apm.pp,34058,N
+5,u-dy039,apm.pp,34002,NO
+6,u-dy039,apm.pp,34003,NO3
+7,u-dy039,apm.pp,34996,NO2
+8,u-dy039,apm.pp,34005,N2O5
+9,u-dy039,apm.pp,34006,HO2NO2
+10,u-dy039,apm.pp,34007,HONO2
+11,u-dy039,apm.pp,34048,BrONO2
+12,u-dy039,apm.pp,34049,N2O
+13,u-dy039,apm.pp,34054,ClONO2
+14,u-dy039,apm.pp,34013,HONO
+15,u-dy039,apm.pp,34017,PAN
+16,u-dy039,apm.pp,34032,MPAN
+17,u-dy039,apm.pp,34025,MeONO2
+18,u-dy039,apm.pp,34098,Lumped_N
+19,u-dy039,apn.pp,34007,hourly HONO2
