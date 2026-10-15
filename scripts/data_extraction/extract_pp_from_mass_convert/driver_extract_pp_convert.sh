@@ -170,7 +170,7 @@ echo "Processing queue validation: PASSED"
 echo "  Workflow: $WORKFLOW_DIR"
 echo "  Config: $CONFIG_FILE"
 echo "  Data scripts: $SRC_DATA_DIR"
-echo "  File: $PATH_PROCESSING_QUEUE"
+echo "  Quei file: $PATH_PROCESSING_QUEUE"
 echo "  Total rows in queue: $queue_data_lines"
 echo "  Requested rows: $JOBS_ARRAY_RANGE"
 echo "  Total requested tasks: $requested_task_count"
@@ -199,7 +199,9 @@ if [[ "$JOB_L_BATCH" = "True" ]]; then
         --error="$LOG_DIR/driver_%j.err" \
         "$SRC_DATA_DIR/batch_process.sh"
 
+	echo ""
 	echo "Execute command 'squeue --me' to monitor all the submitted job."
+	echo ""
 	
 else
 	echo "interactive shell session for extraction from MASS only"
