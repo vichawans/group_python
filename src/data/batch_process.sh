@@ -63,35 +63,44 @@ return 0
 }
 
 batch_convert_pp () {
-    dependent_id=$1
+    local dependent_id="${1:-}"
 
     echo "Parallel convert files"
 
-    # Prepare sbatch command
-    local sbatch_cmd="sbatch --parsable \
-            --job-name=\"pp2$CONVERT_FORMAT dep:$dependent_id\" \
-            --partition=\"$SLURM_PARTITION\" \
-            --account=\"$SLURM_ACCOUNT\" \
-            --qos=\"$SLURM_QOS\" \
-            --time=\"$SLURM_TIME\" \
-            --mem=\"$SLURM_MEMORY\" \
-            --output="$LOG_DIR/convert_%j.out" \
-            --error="$LOG_DIR/convert_%j.err" "
+    # Prepare sbatch command as an argument array so eval is unnecessary.
+    local -a sbatch_cmd=(
+        sbatch
+        --parsable
+        "--job-name=pp2$CONVERT_FORMAT dep:$dependent_id"
+        "--partition=$SLURM_PARTITION"
+        "--account=$SLURM_ACCOUNT"
+        "--qos=$SLURM_QOS"
+        "--time=$SLURM_TIME"
+        "--mem=$SLURM_MEMORY"
+        "--output=$LOG_DIR/convert_%j.out"
+        "--error=$LOG_DIR/convert_%j.err"
+    )
 
     # Add dependency if provided
     if [[ -n "$dependent_id" ]]; then
-        sbatch_cmd+=" --dependency=afterok:$dependent_id"
+        sbatch_cmd+=(
+            "--dependency=afterok:$dependent_id"
+            "--kill-on-invalid-dep=yes"
+        )
     fi
 
-        sbatch_cmd+=" \"$DATA_DIR/convert_one_stash_pp.sh\" \"$jobID\" \
-        \"$stream\" \
-        \"$stash\" \
-        \"$tmp_pp_dir\" \
-        \"$convert_dir\" \
-        \"$slurm_extract_job_id\""
+    sbatch_cmd+=(
+        "$DATA_DIR/convert_one_stash_pp.sh"
+        "$jobID"
+        "$stream"
+        "$stash"
+        "$tmp_pp_dir"
+        "$convert_dir"
+        "$dependent_id"
+    )
 
-    # Submit the copy job and capture the job ID
-    slurm_convert_job_id=$(eval "$sbatch_cmd")
+    # Submit the conversion job and capture the job ID
+    slurm_convert_job_id=$("${sbatch_cmd[@]}")
     echo "Submitted convert job with job ID: $slurm_convert_job_id"
     if [[ -n "$dependent_id" ]]; then
         echo "Job will begin after $dependent_id"
@@ -102,32 +111,39 @@ batch_convert_pp () {
 
 batch_copy () {
 	# copy all files in $src directory to $dest directory
-    src=$1
-    dest=$2
-    dependent_id=$3
+    local src=$1
+    local dest=$2
+    local dependent_id="${3:-}"
 
     echo "Copy files from $src to $dest"
-    # Prepare sbatch command
-    local sbatch_cmd="sbatch --parsable \
-        --job-name=\"cp dep:$dependent_id\" \
-        --partition=\"$SLURM_PARTITION\" \
-        --account=\"$SLURM_ACCOUNT\" \
-        --qos=\"$SLURM_QOS\" \
-        --time=\"$SLURM_TIME\" \
-        --mem=\"$SLURM_MEMORY\" \
-		--chdir="$WORKFLOW_DIR" \
-		--output="$LOG_DIR/cp_%j.out" \
-		--error="$LOG_DIR/cp_%j.err" "
+    # Prepare sbatch command as an argument array so eval is unnecessary.
+    local -a sbatch_cmd=(
+        sbatch
+        --parsable
+        "--job-name=cp dep:$dependent_id"
+        "--partition=$SLURM_PARTITION"
+        "--account=$SLURM_ACCOUNT"
+        "--qos=$SLURM_QOS"
+        "--time=$SLURM_TIME"
+        "--mem=$SLURM_MEMORY"
+        "--chdir=$WORKFLOW_DIR"
+        "--output=$LOG_DIR/cp_%j.out"
+        "--error=$LOG_DIR/cp_%j.err"
+    )
 
     # Add dependency if provided
     if [[ -n "$dependent_id" ]]; then
-        sbatch_cmd+=" --dependency=afterok:$dependent_id"
+        sbatch_cmd+=("--dependency=afterok:$dependent_id")
     fi
 
-        sbatch_cmd+=" \"$DATA_DIR/copy_files.sh\" \"$src\" \"$dest\""
+    sbatch_cmd+=(
+        "$DATA_DIR/copy_files.sh"
+        "$src"
+        "$dest"
+    )
 
     # Submit the copy job and capture the job ID
-    copy_id=$(eval "$sbatch_cmd")
+    copy_id=$("${sbatch_cmd[@]}")
 
     echo "Submitted copy job with job ID: $copy_id"
     if [[ -n "$dependent_id" ]]; then

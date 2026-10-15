@@ -12,7 +12,6 @@ fi
 module load jaspy
 
 if [[ "$CONVERT_FORMAT" = "nc" ]]; then
-    # need to add the path to this script!
     python3 -u "$SRC_DATA_DIR"/convert_pp_to_nc.py "$pp_file_full" "$converted_file_full"
 
 elif [[ "$CONVERT_FORMAT" = "zarr" ]]; then

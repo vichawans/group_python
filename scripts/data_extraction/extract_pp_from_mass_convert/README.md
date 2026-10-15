@@ -58,7 +58,7 @@ Before executing `driver_extract_pp_convert.sh`, user should edit `config.yaml` 
      - `tmp_dir`: "/work/scratch-pw2/\<USERNAME>" the usual scrath location for a user. Use a disk with parallel write access for speed.
      - `extracted_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing pp files long-term
      - `converted_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing converted files long-term
-    - `processing_queue`: "./processing_queues/processing_queue.csv" . Relative paths are resolved relative to this workflow directory; absolute paths are also accepted. The name can be changed to submit to different queues. Do not forget to set `array_range` to customise the array job.
+     - `processing_queue`: "./processing_queues/processing_queue.csv" . Relative paths are resolved relative to this workflow directory; absolute paths are also accepted. The name can be changed to submit to different queues. Do not forget to set `array_range` to customise the array job.
    - `extract`:
      - `l_extra_query`: True/False. Set to True if need extra query options. Then specify the query option file below.
      - `max_retries`: 3. Optional. Just in case need more than 3 retries for extracting data from MASS
@@ -85,12 +85,13 @@ Before executing `driver_extract_pp_convert.sh`, user should edit `config.yaml` 
   The driver performs preflight checks before submitting jobs. It reports the resolved workflow directory, code-script directory, configuration file, processing queue, and array range. Logs are written to the workflow's `log/` directory.
 
    This should spawn a master job, then the master job should spawn.
-   - extracting: one array job for each row in the processing queue CSV file, as directed by array_range.
-   - copying extracted pp: one array job that depends on the completion of the extracting job
-   - converting: one array job for stash. This then spawns one job for each pp file. There will be a lot of jobs.
-   - copying converted file: one array job for each stash. This will wait for the conversion to be done.
 
-5. Monitor the job
+- extracting: one array job for each row in the processing queue CSV file, as directed by array_range.
+- copying extracted pp: one array job that depends on the completion of the extracting job
+- converting: one array job for stash. This then spawns one job for each pp file. There will be a lot of jobs.
+- copying converted file: one array job for each stash. This will wait for the conversion to be done.
+
+1. Monitor the job
 
    Each job has its own log in `log/...`
 
