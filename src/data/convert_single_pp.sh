@@ -3,8 +3,9 @@
 pp_file_full=$1
 converted_file_full=$2
 
-if [[ -n $SRC_DATA_DIR ]]; then
-	echo "SRC_DATA_DIR file not defined. script may not be located."
+if [[ -z "${SRC_DATA_DIR:-}" ]]; then
+    echo "SRC_DATA_DIR is not defined; cannot locate conversion scripts." >&2
+    exit 1
 fi
 
 # Load the necessary modules and activate the conda environment

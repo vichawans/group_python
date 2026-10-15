@@ -13,8 +13,8 @@
 # Edit query_options.txt as appropriate for the data file being extracted e.g. include year range
 # See https://gws-access.jasmin.ac.uk/public/mohc_shared/moose-user-doc/external_user_guide.html#record-level-retrieval-query-syntax
 # Example queries
-#   T1=20180101
-#   T2=20181231
+#   T1>=20180101
+#   T1<=20181231
 # Do not set if extracting full time range
 
 # Edit the try loop (imax) to change the number of attempts if needed.

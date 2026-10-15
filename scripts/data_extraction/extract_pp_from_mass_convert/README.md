@@ -58,7 +58,7 @@ Before executing `driver_extract_pp_convert.sh`, user should edit `config.yaml` 
      - `tmp_dir`: "/work/scratch-pw2/\<USERNAME>" the usual scrath location for a user. Use a disk with parallel write access for speed.
      - `extracted_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing pp files long-term
      - `converted_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing converted files long-term
-     - `processing_queue`: "./processing_queues/processing_queue.csv" . Relative or absolute path to the `processing_queue.csv`. The name can be changed to submit to different queues. Do not forget to set `array_range` to customise the array job.
+    - `processing_queue`: "./processing_queues/processing_queue.csv" . Relative paths are resolved relative to this workflow directory; absolute paths are also accepted. The name can be changed to submit to different queues. Do not forget to set `array_range` to customise the array job.
    - `extract`:
      - `l_extra_query`: True/False. Set to True if need extra query options. Then specify the query option file below.
      - `max_retries`: 3. Optional. Just in case need more than 3 retries for extracting data from MASS
@@ -70,11 +70,19 @@ Before executing `driver_extract_pp_convert.sh`, user should edit `config.yaml` 
 
 4. Execute the code from the code directory
 
-   On Jasmin, go to this script folder and execute the driver script.
+  Execute the driver with Bash. It can be called from any directory; paths to the repository scripts and workflow logs are resolved from the driver location.
 
    ```bash
-   [vs480@sci-ph-01 extract_pp_convert]$ sh driver_extract_pp_convert.sh
+  [vs480@sci-ph-01 ~]$ bash /home/users/vs480/git/group_python/scripts/data_extraction/extract_pp_from_mass_convert/driver_extract_pp_convert.sh
    ```
+
+  An alternative configuration file can be supplied as the first argument:
+
+  ```bash
+  bash /path/to/driver_extract_pp_convert.sh /path/to/config.yaml
+  ```
+
+  The driver performs preflight checks before submitting jobs. It reports the resolved workflow directory, code-script directory, configuration file, processing queue, and array range. Logs are written to the workflow's `log/` directory.
 
    This should spawn a master job, then the master job should spawn.
    - extracting: one array job for each row in the processing queue CSV file, as directed by array_range.
@@ -175,6 +183,6 @@ This lists all stash items in each stream in separate text files.
 ## Known problem
 
 - This code will always try to check for extract pp `max_retries` times. It's probably better to don't try if the extract is not corrupted to be a good MASS citizen...
-- working directory in `driver_extract_pp_convert.sh` is relative to current directory and is hardcoded. Probably need a better way of doing this.
+- The driver requires Bash, Python 3 with PyYAML, and (for batch mode) Slurm's `sbatch` command. It resolves repository scripts and workflow logs from its own location, while data directories remain configured in `config.yaml`.
 - Copying converted nc file does not depend on each nc convert job. That means `l_copy_converted` needs to be False when `l_convert` is True for now.
 - This code may be too parallel when converting each pp file. It produces too many log files. It may be useful to group together conversion log files.

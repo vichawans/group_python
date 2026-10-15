@@ -1,11 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -euo pipefail
 
 # submit_to_mass-cli.sh - Manages job submission with concurrency control
 # Usage: submit_to_mass-cli.sh <max_jobs> <jobs_array_range>
 # Example: submit_to_mass-cli.sh 6 "1-5,7"
 
-MAX_JOBS=$1
-JOBS_ARRAY_RANGE=$2
+MAX_JOBS=${1:?"Usage: submit_to_mass-cli.sh MAX_JOBS JOBS_ARRAY_RANGE"}
+JOBS_ARRAY_RANGE=${2:?"Usage: submit_to_mass-cli.sh MAX_JOBS JOBS_ARRAY_RANGE"}
+WORKFLOW_DIR=${WORKFLOW_DIR:-"$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"}
+SRC_DATA_DIR=${SRC_DATA_DIR:-"$(cd -- "$WORKFLOW_DIR/../../../src/data" && pwd -P)"}
+LOG_DIR=${LOG_DIR:-"$WORKFLOW_DIR/log"}
+
+mkdir -p "$LOG_DIR"
 
 # Expand SLURM array range (e.g., "1-5,7" -> 1 2 3 4 5 7)
 expand_array_range() {
@@ -32,9 +39,9 @@ expand_array_range() {
 # Expand job IDs and submit with concurrency control
 job_ids=$(expand_array_range "$JOBS_ARRAY_RANGE")
 echo "$JOBS_ARRAY_RANGE"
-echo $job_ids
+echo "$job_ids"
 for job_id in $job_ids; do
-	echo $job_id
+	echo "$job_id"
     # Wait if we've reached the job limit
     while [ "$(jobs -r | wc -l)" -ge "$MAX_JOBS" ]; do
         sleep 1
@@ -42,7 +49,7 @@ for job_id in $job_ids; do
     
     # Submit the job in background
     export JOBS_ARRAY_TASK_ID="$job_id"
-    sh interactive_extract_process.sh > log/extract_log_"$job_id" &
+    bash "$SRC_DATA_DIR/interactive_extract_process.sh" > "$LOG_DIR/extract_log_$job_id" 2>&1 &
 done
 
 # Wait for all jobs to complete

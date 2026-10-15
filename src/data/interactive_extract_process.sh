@@ -1,10 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -euo pipefail
 
 # driver script to batch extract pp files using retrieve_stash.sh and
 # for converting pp files. This should be executed from driver script 
 # which sets the global variables
 
 # Usage: sh interactive_extract_convert_process.sh
+
+DATA_DIR=${SRC_DATA_DIR:-"$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"}
+WORKFLOW_DIR=${WORKFLOW_DIR:-"$(cd -- "$DATA_DIR/../../scripts/data_extraction/extract_pp_from_mass_convert" && pwd -P)"}
+LOG_DIR=${LOG_DIR:-"$WORKFLOW_DIR/log"}
+
+mkdir -p "$LOG_DIR"
 
 ### DEFINE FUNCTIONS ##################################################################
 
@@ -25,7 +33,7 @@ extract_pp () {
 	src_data_abs="$(cd "$SRC_DATA_DIR" 2>/dev/null && pwd)" || { echo "Error: Cannot resolve $SRC_DATA_DIR" >&2; exit 1; }
 	
 	## For executing from jasmin-sci machines
-	ssh mass-cli "sh \"$src_data_abs/extract_stash.sh\" \"$jobID\" \"$stream\" \"$stash\" \"$tmp_pp_dir\" \"$EXTRACT_MAX_RETRIES\" \"$EXTRACT_QUERY_OPTIONS\"" > "log/extract_atomic_log_${jobID}_${stream}_${stash}" 2>&1
+    ssh mass-cli "bash \"$src_data_abs/extract_stash.sh\" \"$jobID\" \"$stream\" \"$stash\" \"$tmp_pp_dir\" \"$EXTRACT_MAX_RETRIES\" \"$EXTRACT_QUERY_OPTIONS\"" > "$LOG_DIR/extract_atomic_log_${jobID}_${stream}_${stash}" 2>&1
 	
 	## for using on mass-cli machine interactively
 	# sh "$src_data_abs/extract_stash.sh" "$jobID" "$stream" "$stash" "$tmp_pp_dir" \
@@ -35,7 +43,7 @@ extract_pp () {
 
 convert_pp () {
     echo "Parallel convert files"
-	sh convert_one_stash_pp.sh "$jobID" "$stream" "$stash" "$tmp_pp_dir" "$convert_dir"
+    bash "$DATA_DIR/convert_one_stash_pp.sh" "$jobID" "$stream" "$stash" "$tmp_pp_dir" "$convert_dir"
 
 return 0
 }
@@ -46,7 +54,7 @@ copy () {
     dest=$2
 
     echo "Copy files from $src to $dest"
-    sh copy_files.sh "$src" "$dest"
+    bash "$DATA_DIR/copy_files.sh" "$src" "$dest"
 
     echo ""
     return 0

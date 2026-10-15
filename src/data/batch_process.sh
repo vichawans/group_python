@@ -15,6 +15,15 @@
 
 # Usage: sbatch retrieve_pp_batch.sh
 
+set -euo pipefail
+
+# set paths if not already set
+DATA_DIR=${SRC_DATA_DIR:-"$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"}
+WORKFLOW_DIR=${WORKFLOW_DIR:-"$(cd -- "$DATA_DIR/../../scripts/data_extraction/extract_pp_from_mass_convert" && pwd -P)"}
+LOG_DIR=${LOG_DIR:-"$WORKFLOW_DIR/log"}
+
+mkdir -p "$LOG_DIR"
+
 ### DEFINE FUNCTIONS ##################################################################
 
 batch_extract_pp () {
@@ -38,9 +47,11 @@ slurm_extract_job_id=$(sbatch --parsable \
         --account="mass" \
         --qos="mass" \
 		--time="$EXTRACT_WALLTIME" \
-		--output="log/extract_%x_%j.out" \
-		--error="log/extract_%x_%j.err" \
-        extract_stash.sh "$jobID" \
+		--mem=94000M \
+        --chdir="$WORKFLOW_DIR" \
+        --output="$LOG_DIR/extract_%x_%j.out" \
+        --error="$LOG_DIR/extract_%x_%j.err" \
+        "$DATA_DIR/extract_stash.sh" "$jobID" \
         "$stream" "$stash" "$tmp_pp_dir" \
         "$EXTRACT_MAX_RETRIES" \
         "$EXTRACT_QUERY_OPTIONS" )
@@ -48,7 +59,7 @@ slurm_extract_job_id=$(sbatch --parsable \
 echo "Submitted MASS extraction job with job ID: $slurm_extract_job_id"
 echo "jobID=$jobID; stream=$stream; stash=$stash"
 
-return "$slurm_extract_job_id"
+return 0 
 }
 
 batch_convert_pp () {
@@ -58,21 +69,21 @@ batch_convert_pp () {
 
     # Prepare sbatch command
     local sbatch_cmd="sbatch --parsable \
-        --job-name=\"pp2$CONVERT_FORMAT dep:$dependent_id\" \
-        --partition=\"$SLURM_PARTITION\" \
-        --account=\"$SLURM_ACCOUNT\" \
-        --qos=\"$SLURM_QOS\" \
-        --time=\"$SLURM_TIME\" \
-        --mem=\"$SLURM_MEMORY\" \
-		--output=\"log/convert_%j.out\" \
-		--error=\"log/convert_%j.err\" "
+            --job-name=\"pp2$CONVERT_FORMAT dep:$dependent_id\" \
+            --partition=\"$SLURM_PARTITION\" \
+            --account=\"$SLURM_ACCOUNT\" \
+            --qos=\"$SLURM_QOS\" \
+            --time=\"$SLURM_TIME\" \
+            --mem=\"$SLURM_MEMORY\" \
+            --output="$LOG_DIR/convert_%j.out" \
+            --error="$LOG_DIR/convert_%j.err" "
 
     # Add dependency if provided
     if [[ -n "$dependent_id" ]]; then
         sbatch_cmd+=" --dependency=afterok:$dependent_id"
     fi
 
-    sbatch_cmd+=" convert_one_stash_pp.sh \"$jobID\" \
+        sbatch_cmd+=" \"$DATA_DIR/convert_one_stash_pp.sh\" \"$jobID\" \
         \"$stream\" \
         \"$stash\" \
         \"$tmp_pp_dir\" \
@@ -104,15 +115,16 @@ batch_copy () {
         --qos=\"$SLURM_QOS\" \
         --time=\"$SLURM_TIME\" \
         --mem=\"$SLURM_MEMORY\" \
-        --output=\"log/cp_%j.out\" \
-        --error=\"log/cp_%j.err\" "
+		--chdir="$WORKFLOW_DIR" \
+		--output="$LOG_DIR/cp_%j.out" \
+		--error="$LOG_DIR/cp_%j.err" "
 
     # Add dependency if provided
     if [[ -n "$dependent_id" ]]; then
         sbatch_cmd+=" --dependency=afterok:$dependent_id"
     fi
 
-    sbatch_cmd+=" copy_files.sh \"$src\" \"$dest\""
+        sbatch_cmd+=" \"$DATA_DIR/copy_files.sh\" \"$src\" \"$dest\""
 
     # Submit the copy job and capture the job ID
     copy_id=$(eval "$sbatch_cmd")
@@ -196,7 +208,6 @@ echo ""
 # If extract only and not convert
 if [[ "$JOB_L_EXTRACT" = "True" ]]; then
 	batch_extract_pp
-	echo ""
 
 	echo "Submitted extracting with slurm_extract_job_id=$slurm_extract_job_id"
     echo ""
@@ -242,5 +253,5 @@ if [[  "$JOB_L_CONVERT" = "False" && $copy_converted = 'True' ]]; then
     batch_copy "$convert_dir" "$converted_save_dir_full"
 fi
 
-echo "Finishd submission: $jobID $stream $stash"
+echo "Finished submission: $jobID $stream $stash"
 echo ""
