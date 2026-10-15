@@ -13,8 +13,8 @@
 # Edit query_options.txt as appropriate for the data file being extracted e.g. include year range
 # See https://gws-access.jasmin.ac.uk/public/mohc_shared/moose-user-doc/external_user_guide.html#record-level-retrieval-query-syntax
 # Example queries
-#   T1=20180101
-#   T2=20181231
+#   T1>=20180101
+#   T1<=20181231
 # Do not set if extracting full time range
 
 # Edit the try loop (imax) to change the number of attempts if needed.
@@ -60,14 +60,27 @@ echo "Query file created: $query_file"
 cat $query_file
 echo ""
 
-# load ppfile from moose and save to tmp directory. 
+# Load pp files from MOOSE and propagate failure if every attempt fails.
 i=1
-until [ $i -gt "$imax" ]; do
-  echo "Attemp $i/$imax;"
+retrieval_succeeded=false
+while [[ "$i" -le "$imax" ]]; do
+  echo "Attempt $i/$imax;"
   echo "  moo select --fill-gaps-and-overwrite-smaller-files $query_file moose:crum/$jobID/$stream ./"
-  moo select --fill-gaps-and-overwrite-smaller-files $query_file moose:crum/"$jobID"/"$stream" ./ 
-  ((i++))
+
+  if moo select --fill-gaps-and-overwrite-smaller-files \
+      "$query_file" "moose:crum/$jobID/$stream" ./; then
+    retrieval_succeeded=true
+    break
+  fi
+
+  echo "MASS extraction attempt $i/$imax failed." >&2
+  i=$((i + 1))
 done
+
+if [[ "$retrieval_succeeded" != true ]]; then
+  echo "ERROR: MASS extraction failed after $imax attempt(s)." >&2
+  exit 1
+fi
 
 echo ""
 echo "------------------------------------------------"
