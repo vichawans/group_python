@@ -60,14 +60,27 @@ echo "Query file created: $query_file"
 cat $query_file
 echo ""
 
-# load ppfile from moose and save to tmp directory. 
+# Load pp files from MOOSE and propagate failure if every attempt fails.
 i=1
-until [ $i -gt "$imax" ]; do
-  echo "Attemp $i/$imax;"
+retrieval_succeeded=false
+while [[ "$i" -le "$imax" ]]; do
+  echo "Attempt $i/$imax;"
   echo "  moo select --fill-gaps-and-overwrite-smaller-files $query_file moose:crum/$jobID/$stream ./"
-  moo select --fill-gaps-and-overwrite-smaller-files $query_file moose:crum/"$jobID"/"$stream" ./ 
-  ((i++))
+
+  if moo select --fill-gaps-and-overwrite-smaller-files \
+      "$query_file" "moose:crum/$jobID/$stream" ./; then
+    retrieval_succeeded=true
+    break
+  fi
+
+  echo "MASS extraction attempt $i/$imax failed." >&2
+  i=$((i + 1))
 done
+
+if [[ "$retrieval_succeeded" != true ]]; then
+  echo "ERROR: MASS extraction failed after $imax attempt(s)." >&2
+  exit 1
+fi
 
 echo ""
 echo "------------------------------------------------"

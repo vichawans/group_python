@@ -133,7 +133,10 @@ batch_copy () {
 
     # Add dependency if provided
     if [[ -n "$dependent_id" ]]; then
-        sbatch_cmd+=("--dependency=afterok:$dependent_id")
+        sbatch_cmd+=(
+            "--dependency=afterok:$dependent_id"
+            --kill-on-invalid-dep=yes
+        )
     fi
 
     sbatch_cmd+=(
@@ -159,10 +162,16 @@ batch_copy () {
 
 processing_queue="$PATH_PROCESSING_QUEUE"
 
-# Extract the stream and stash for the current $SLURM_ARRAY_TASK_ID
-jobID=$(grep "^$SLURM_ARRAY_TASK_ID," "$processing_queue" | head -n1 | cut -d',' -f2 | tr -d '\r')
-stream=$(grep "^$SLURM_ARRAY_TASK_ID," "$processing_queue" | head -n1 | cut -d',' -f3 | tr -d '\r')
-stash=$(grep "^$SLURM_ARRAY_TASK_ID," "$processing_queue" | head -n1 | cut -d',' -f4 | tr -d '\r')
+# Extract the complete queue row once for the current array task.
+queue_row=$(awk -F',' -v task_id="$SLURM_ARRAY_TASK_ID" \
+    'NR > 1 && $1 == task_id { print; exit }' "$processing_queue")
+if [[ -z "$queue_row" ]]; then
+    echo "ERROR: No processing queue row for array task $SLURM_ARRAY_TASK_ID" >&2
+    exit 1
+fi
+
+queue_row="${queue_row%$'\r'}"
+IFS=, read -r _queue_task jobID stream stash _queue_label <<< "$queue_row"
 
 
 # Internal variables

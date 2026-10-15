@@ -81,28 +81,99 @@ if ! command -v sbatch >/dev/null 2>&1 && [[ "${JOB_L_BATCH:-False}" = "True" ]]
     exit 1
 fi
 
-# Check that processing_queue has enough rows for the requested array range.
-num_lines=$(wc -l < "$PATH_PROCESSING_QUEUE")
-max_array=$(echo "$JOBS_ARRAY_RANGE" | awk -F'[-,]' '{print $NF}')
+# Validate the queue structure and every requested array task.
+if [[ ! -s "$PATH_PROCESSING_QUEUE" ]]; then
+    echo "ERROR: Processing queue is empty: $PATH_PROCESSING_QUEUE" >&2
+    exit 1
+fi
 
-if ! [[ "$max_array" =~ ^[0-9]+$ ]]; then
+IFS=, read -r header_task header_job header_stream header_stash _header_label < "$PATH_PROCESSING_QUEUE"
+header_stash="${header_stash%$'\r'}"
+if [[ "$header_task" != "task_id" || "$header_job" != "job_id" || \
+      "$header_stream" != "stream" || "$header_stash" != "stashID" ]]; then
+    echo "ERROR: Invalid processing queue header in $PATH_PROCESSING_QUEUE" >&2
+    echo "       Expected: task_id,job_id,stream,stashID[,label]" >&2
+    exit 1
+fi
+
+declare -A queue_task_ids=()
+queue_data_lines=0
+queue_line_number=1
+while IFS=, read -r queue_task queue_job queue_stream queue_stash _queue_label; do
+    queue_line_number=$((queue_line_number + 1))
+    queue_task="${queue_task%$'\r'}"
+    queue_job="${queue_job%$'\r'}"
+    queue_stream="${queue_stream%$'\r'}"
+    queue_stash="${queue_stash%$'\r'}"
+
+    if [[ -z "$queue_task$queue_job$queue_stream$queue_stash" ]]; then
+        echo "ERROR: Blank processing queue row at line $queue_line_number" >&2
+        exit 1
+    fi
+    if ! [[ "$queue_task" =~ ^[1-9][0-9]*$ ]]; then
+        echo "ERROR: Invalid task ID '$queue_task' at queue line $queue_line_number" >&2
+        exit 1
+    fi
+    if [[ -z "$queue_job" || -z "$queue_stream" || -z "$queue_stash" ]]; then
+        echo "ERROR: Missing required queue field at line $queue_line_number" >&2
+        exit 1
+    fi
+    if ! [[ "$queue_stash" =~ ^[0-9]+$ ]]; then
+        echo "ERROR: Invalid stash '$queue_stash' at queue line $queue_line_number" >&2
+        exit 1
+    fi
+    if [[ -v "queue_task_ids[$queue_task]" ]]; then
+        echo "ERROR: Duplicate task ID '$queue_task' in processing queue" >&2
+        exit 1
+    fi
+
+    queue_task_ids["$queue_task"]=1
+    queue_data_lines=$((queue_data_lines + 1))
+done < <(tail -n +2 "$PATH_PROCESSING_QUEUE")
+
+declare -A requested_task_ids=()
+IFS=, read -r -a array_entries <<< "$JOBS_ARRAY_RANGE"
+if [[ "${#array_entries[@]}" -eq 0 ]]; then
     echo "ERROR: Invalid jobs.array_range: $JOBS_ARRAY_RANGE" >&2
     exit 1
 fi
 
-if [[ "$num_lines" -lt "$max_array" ]]; then
-    echo "ERROR: Processing queue has $num_lines lines but array_range requests up to $max_array" >&2
-    echo "       Update JOBS_ARRAY_RANGE in config.yaml to match processing_queue.csv"
-    exit 1
-fi
+for array_entry in "${array_entries[@]}"; do
+    if [[ "$array_entry" =~ ^([1-9][0-9]*)-([1-9][0-9]*)$ ]]; then
+        range_start=${BASH_REMATCH[1]}
+        range_end=${BASH_REMATCH[2]}
+        if (( range_start > range_end )); then
+            echo "ERROR: Invalid jobs.array_range: $JOBS_ARRAY_RANGE" >&2
+            exit 1
+        fi
+        for ((task_id = range_start; task_id <= range_end; task_id++)); do
+            requested_task_ids["$task_id"]=1
+        done
+    elif [[ "$array_entry" =~ ^[1-9][0-9]*$ ]]; then
+        requested_task_ids["$array_entry"]=1
+    else
+        echo "ERROR: Invalid jobs.array_range: $JOBS_ARRAY_RANGE" >&2
+        exit 1
+    fi
+done
+
+for task_id in "${!requested_task_ids[@]}"; do
+    if [[ ! -v "queue_task_ids[$task_id]" ]]; then
+        echo "ERROR: No processing queue row for array task $task_id" >&2
+        exit 1
+    fi
+done
+
+requested_task_count=${#requested_task_ids[@]}
 
 echo "Processing queue validation: PASSED"
 echo "  Workflow: $WORKFLOW_DIR"
 echo "  Config: $CONFIG_FILE"
 echo "  Data scripts: $SRC_DATA_DIR"
 echo "  File: $PATH_PROCESSING_QUEUE"
-echo "  Total lines: $num_lines"
-echo "  Array range: $JOBS_ARRAY_RANGE"
+echo "  Total rows in queue: $queue_data_lines"
+echo "  Requested rows: $JOBS_ARRAY_RANGE"
+echo "  Total requested tasks: $requested_task_count"
 echo ""
 
 # check if EXTRACT_DRY_RUN is set. If set, just exit as not actually running anything. 

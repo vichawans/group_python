@@ -1,12 +1,21 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# copy files over using environment variables
-# copy all files in $src directory to $dest directory
+set -euo pipefail
 
+local src="${1:?batch_copy requires a source directory}"
+local dest="${2:?batch_copy requires a destination directory}"
 
-src=$1
-dest=$2
+echo "Synchronizing files from $src to $dest"
 
-echo "Copy files from $src to $dest"
+if [[ ! -d "$src" ]]; then
+	echo "ERROR: Source directory not found: $src" >&2
+	exit 1
+fi
+
 mkdir -p "$dest"
-cp "$src"/* "$dest"
+
+# Copy directory contents, preserving metadata and allowing interrupted jobs to resume.
+rsync --archive --partial --human-readable --info=stats2 \
+	"$src/" "$dest/"
+
+echo "Finished synchronizing files from $src to $dest"
