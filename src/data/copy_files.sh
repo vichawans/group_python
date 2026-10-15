@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-local src="${1:?batch_copy requires a source directory}"
-local dest="${2:?batch_copy requires a destination directory}"
+src="${1:?copy_files requires a source directory}"
+dest="${2:?copy_files requires a destination directory}"
 
 echo "Synchronizing files from $src to $dest"
 

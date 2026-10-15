@@ -183,7 +183,5 @@ This lists all stash items in each stream in separate text files.
 
 ## Known problem
 
-- This code will always try to check for extract pp `max_retries` times. It's probably better to don't try if the extract is not corrupted to be a good MASS citizen...
 - The driver requires Bash, Python 3 with PyYAML, and (for batch mode) Slurm's `sbatch` command. It resolves repository scripts and workflow logs from its own location, while data directories remain configured in `config.yaml`.
-- Copying converted nc file does not depend on each nc convert job. That means `l_copy_converted` needs to be False when `l_convert` is True for now.
 - This code may be too parallel when converting each pp file. It produces too many log files. It may be useful to group together conversion log files.
