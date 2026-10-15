@@ -92,7 +92,7 @@ Before executing `driver_extract_pp_convert.sh`, user should edit `config.yaml` 
 
   This should spawn an array of workflow jobs. Each array task maps to one validated row in the processing queue.
 
-1. Monitor the job
+1. **Monitor the job**
 
   Each job has its own log in `log/...`. Per-file conversion jobs use separate output and error logs named with their SLURM job IDs.
 
