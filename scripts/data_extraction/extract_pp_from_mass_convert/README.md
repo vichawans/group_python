@@ -1,5 +1,7 @@
 # Extract pp file from MASS and convert to NetCDF files
 
+**Please check out the whole git directory (group_python) for this script to work**
+
 This folder contains scripts for streamlining data retrieval from MASS and converting pp files to NetCDF files. The script depends on other codes in `src/data` and `src/util`.
 
 This works on JASMIN [sci servers](https://help.jasmin.ac.uk/docs/interactive-computing/sci-servers/) (and any other servers with access to mass-cli).
@@ -16,11 +18,11 @@ Before executing `driver_extract_pp_convert.sh`, user should edit `config.yaml` 
 
 ### Steps for using the script
 
-1. Check prerequisites and job details
-   - Check that there is a conda environment that has `iris` and `yaml` package. Module jaspy should have this by default.
-   - Check for batch job compute allocation. See if user has account with QOS short at least. [See JASMIN documentation](https://help.jasmin.ac.uk/docs/batch-computing/how-to-submit-a-job/).
-   - Note the details of Account and QOS which will be needed to set `config.yaml`
-   - Example commands and output
+1. **Check prerequisites and job details**
+
+- Check that the runtime provides Iris and PyYAML. The `jaspy` module should provide both packages on JASMIN.
+- Check for batch job compute allocation. See if user has account with QOS short at least. [See JASMIN documentation](https://help.jasmin.ac.uk/docs/batch-computing/how-to-submit-a-job/).
+- Example commands and output
 
    ```bash
    $ useraccounts
@@ -32,14 +34,17 @@ Before executing `driver_extract_pp_convert.sh`, user should edit `config.yaml` 
    vs480           shobu
    ```
 
-   - Note the details of Account and QOS which will be needed to set `config.yaml`
+- Note the details of Account and QOS which will be needed to set `config.yaml`
 
-2. Edit or create `processing_queue.csv` file
-   - This is for sbatch to parallelize the extract for each stash. The file should contain 4 columns: `task_id`, `job_id`, `stream`, and `stash`. See `processing_queues/processing_queue.csv` for an example.
-   - I find it helpful to create the csv in external point-and-click software like Excel/Google Sheets and export as csv files.
-   - See [useful code snippets](#useful-code-snippets) for how to check the available stashes in a suite
+1. **Edit or create `processing_queue.csv` file**
 
-3. Edit `config.yaml`. This file sets how to run the script for each column of `processing_queue.csv`.
+- This is for parallelize each stash. The file must contain the columns `task_id`, `job_id`, `stream`, and `stashID`. An optional fifth `label` column may be included for your own reference; it is ignored by the workflow. See `processing_queues/processing_queue.csv` for an example.
+  - `task_id` values must be positive integers and unique.
+  - `stashID` must be numeric.
+- I find it helpful to create the csv in external point-and-click software like Excel/Google Sheets and export as csv files.
+- See [useful code snippets](#useful-code-snippets) for how to check the available stashes in a suite
+
+1. **Edit `config.yaml`.** This file sets how to run the script for each column of `processing_queue.csv`.
    - `job`:
      - `name`: "AAAAA" Job name for slurm. (Any string is fine; this is for user comment.)
      - `l_batch`: True/False. Must be True for now as the code only accept sbatch execution.
@@ -61,39 +66,35 @@ Before executing `driver_extract_pp_convert.sh`, user should edit `config.yaml` 
      - `processing_queue`: "./processing_queues/processing_queue.csv" . Relative paths are resolved relative to this workflow directory; absolute paths are also accepted. The name can be changed to submit to different queues. Do not forget to set `array_range` to customise the array job.
    - `extract`:
      - `l_extra_query`: True/False. Set to True if need extra query options. Then specify the query option file below.
-     - `max_retries`: 3. Optional. Just in case need more than 3 retries for extracting data from MASS
-     - `walltime`: "24:00:00" Set maximum job extract time. Shorter time means the queue gets higher priority
      - `query_options`: "./query_options.txt" optional, for setting extra query options, especially time domain to extract, only use if `l_extra_query` is True
+     - `max_retries`: 3. Optional. Just in case need more than 3 retries for extracting data from MASS
+     - `walltime`: "24:00:00" Set maximum job extract time. Shorter time means the queue gets higher priority.
+
    - `convert`:
      - `l_use_extracted_save_dir`: True/False. Optional. For converting from pp files in `extracted_save_dir` instead of from `tmp_dir`
-     - `format`: "nc"/"zarr" case sensitive (untested). Only nc is working now.
+     - `format`: "nc"/"zarr" case sensitive. Only nc is working now.
 
-4. Execute the code from the code directory
+2. **Execute the code**
 
   Execute the driver with Bash. It can be called from any directory; paths to the repository scripts and workflow logs are resolved from the driver location.
 
    ```bash
-  [vs480@sci-ph-01 ~]$ bash /home/users/vs480/git/group_python/scripts/data_extraction/extract_pp_from_mass_convert/driver_extract_pp_convert.sh
+  bash driver_extract_pp_convert.sh
    ```
 
   An alternative configuration file can be supplied as the first argument:
 
   ```bash
-  bash /path/to/driver_extract_pp_convert.sh /path/to/config.yaml
+  bash driver_extract_pp_convert.sh /path/to/config.yaml
   ```
 
-  The driver performs preflight checks before submitting jobs. It reports the resolved workflow directory, code-script directory, configuration file, processing queue, and array range. Logs are written to the workflow's `log/` directory.
+  The driver performs preflight checks before submitting jobs. Logs are written to the workflow's `log/` directory.
 
-   This should spawn a master job, then the master job should spawn.
-
-- extracting: one array job for each row in the processing queue CSV file, as directed by array_range.
-- copying extracted pp: one array job that depends on the completion of the extracting job
-- converting: one array job for stash. This then spawns one job for each pp file. There will be a lot of jobs.
-- copying converted file: one array job for each stash. This will wait for the conversion to be done.
+  This should spawn an array of workflow jobs. Each array task maps to one validated row in the processing queue.
 
 1. Monitor the job
 
-   Each job has its own log in `log/...`
+  Each job has its own log in `log/...`. Per-file conversion jobs use separate output and error logs named with their SLURM job IDs.
 
    To monitor slurm jobs, [see JASMIN documentation](https://help.jasmin.ac.uk/docs/batch-computing/how-to-monitor-slurm-jobs/).
 
@@ -181,7 +182,22 @@ This lists all stash items in each stream in separate text files.
 
 ---
 
+## More details
+
+- extracting: one MASS extraction job for each requested array task.
+- copying extracted pp: an optional `rsync` job that waits for extraction to complete successfully.
+- converting: one conversion coordinator for each requested array task. It submits one conversion job per pp file and waits for all of them to finish.
+- copying converted files: an optional `rsync` job that waits for the conversion coordinator and therefore all per-file conversion jobs to complete successfully.
+
+Jobs use SLURM `afterok` dependencies. If extraction or conversion fails, dependent conversion or copy jobs do not start. Jobs with dependencies also use `--kill-on-invalid-dep=yes`.
+
+Each generated NetCDF file is reopened with Iris after conversion. A conversion job fails if the output cannot be read or contains no readable cubes. Failed conversion reports include the input pp filename.
+
+Copies use `rsync --archive --partial`, which preserves metadata, includes hidden files, and allows interrupted transfers to resume. Existing files in the destination are not deleted.
+
+---
+
 ## Known problem
 
 - The driver requires Bash, Python 3 with PyYAML, and (for batch mode) Slurm's `sbatch` command. It resolves repository scripts and workflow logs from its own location, while data directories remain configured in `config.yaml`.
-- This code may be too parallel when converting each pp file. It produces too many log files. It may be useful to group together conversion log files.
+- Conversion is intentionally fanned out to one SLURM job per pp file, which allows independent resources and failure reporting but can produce many jobs and log files. If this becomes a scheduling or bookkeeping problem, conversion could be grouped into fewer jobs.
