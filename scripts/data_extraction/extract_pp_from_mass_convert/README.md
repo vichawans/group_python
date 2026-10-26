@@ -65,8 +65,7 @@ Before executing `driver_extract_pp_convert.sh`, user should edit `config.yaml` 
      - `converted_save_dir`: "/gws/nopw/j04/acsis/vs480/model_output". Optional, for storing converted files long-term
      - `processing_queue`: "./processing_queues/processing_queue.csv" . Relative paths are resolved relative to this workflow directory; absolute paths are also accepted. The name can be changed to submit to different queues. Do not forget to set `array_range` to customise the array job.
    - `extract`:
-     - `l_extra_query`: True/False. Set to True if need extra query options. Then specify the query option file below.
-     - `query_options`: "./query_options.txt" optional, for setting extra query options, especially time domain to extract, only use if `l_extra_query` is True
+     - `query_options`: "./query_options.txt" optional, for setting extra query options, especially time domain to extract. Leave empty ("") or omit to not use extra query options
      - `max_retries`: 3. Optional. Just in case need more than 3 retries for extracting data from MASS
      - `walltime`: "24:00:00" Set maximum job extract time. Shorter time means the queue gets higher priority.
 
