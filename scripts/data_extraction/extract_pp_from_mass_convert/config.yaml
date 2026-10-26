@@ -16,20 +16,20 @@ slurm:
   memory: "2000"
 
 jobs:
-  array_range: "19"
+  array_range: "1"
 
 # Paths
 path:
   tmp_dir: "/work/scratch-pw5/vs480"
   extracted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_downloaded=True or l_use_downloaded_save_dir=True
   converted_save_dir: "/gws/nopw/j04/acsis/vs480/model_output" # optional. Use only if l_copy_converted=True
-  processing_queue: "/home/users/vs480/git/group_python/informal/vs480/processing_queues/processing_queue_izzy-triple-hno3.csv" # absolute path or relative to working directory
+  processing_queue: "/home/users/vs480/git/group_python/informal/vs480/processing_queues/processing_queue_u-ed828.csv" # absolute path or relative to working directory
 
 # MASS extracting options
 extract:
-  l_extra_query: True
+  l_extra_query: False
   max_retries: 1 # optional
-  walltime: "30:00" # Maximum 24:00:00 . Choose lower walltime to get ahead in the queue ;)
+  walltime: "12:00:00" # Maximum 24:00:00 . Choose lower walltime to get ahead in the queue ;)
   query_options: "/home/users/vs480/git/group_python/scripts/data_extraction/extract_pp_from_mass_convert/query_options.txt" # optional. Use only if l_extra_query=True
 
 # Processing options
