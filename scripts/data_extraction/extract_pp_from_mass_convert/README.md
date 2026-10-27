@@ -72,6 +72,7 @@ Before executing `driver_extract_pp_convert.sh`, user should edit `config.yaml` 
    - `convert`:
      - `l_use_extracted_save_dir`: True/False. Optional. For converting from pp files in `extracted_save_dir` instead of from `tmp_dir`
      - `format`: "nc"/"zarr" case sensitive. Only nc is working now.
+     - `max_parallel`: 10 Set maximum conversion tasks running at once per stash (default 10)
 
 2. **Execute the code**
 
