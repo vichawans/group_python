@@ -1,0 +1,52 @@
+task_id,job_id,stream,stashID,details
+1,u-ed776,apm.pp,34001,O3
+2,u-ed776,apm.pp,34002,NO
+3,u-ed776,apm.pp,34003,NO3
+4,u-ed776,apm.pp,34996,NO2 (not advected)
+5,u-ed776,apm.pp,34004,NO2 (advected)
+6,u-ed776,apm.pp,34005,N2O5
+7,u-ed776,apm.pp,34006,HO2NO2
+8,u-ed776,apm.pp,34007,HONO2
+9,u-ed776,apm.pp,34041,Cl
+10,u-ed776,apm.pp,34042,ClO
+11,u-ed776,apm.pp,34054,ClONO2
+12,u-ed776,apm.pp,34100,Cl_lumped_as_HCl
+13,u-ed776,apm.pp,34992,HCl
+14,u-ed776,apm.pp,34966,Aerosol surface area density
+15,u-ed776,apm.pp,50256,Aerosol surface area in PSC chem
+16,u-ed776,apm.pp,4,theta
+17,u-ed776,apm.pp,408,press
+18,u-ed776,apm.pp,10,q
+19,u-ed776,apm.pp,34105,bc_aitsol
+20,u-ed776,apm.pp,34109,bc_accsol
+21,u-ed776,apm.pp,34115,bc_coasol
+22,u-ed776,apm.pp,34120,bc_aitins
+23,u-ed776,apm.pp,34106,oc_aitsol
+24,u-ed776,apm.pp,34110,oc_accsol
+25,u-ed776,apm.pp,34116,oc_coasol
+26,u-ed776,apm.pp,34121,oc_aitins
+27,u-ed776,apm.pp,2251,total_saod
+28,u-ed776,apm.pp,2252,total_saod
+29,u-ed776,apm.pp,2253,total_saod
+30,u-ed776,apm.pp,2254,total_saod
+31,u-ed776,apm.pp,2240,total_aaod
+32,u-ed776,apm.pp,2241,total_aaod
+33,u-ed776,apm.pp,2242,total_aaod
+34,u-ed776,apm.pp,2243,total_aaod
+35,u-ed776,apm.pp,2530,3Dext_monthly
+36,u-ed776,apm.pp,16004,temp_theta_lev
+37,u-ed776,apm.pp,30453,trop_height
+38,u-ed776,apm.pp,30451,trop_press
+39,u-ed776,apd.pp,34105,bc_aitsol
+40,u-ed776,apd.pp,34109,bc_accsol
+41,u-ed776,apd.pp,34115,bc_coasol
+42,u-ed776,apd.pp,34120,bc_aitins
+43,u-ed776,apd.pp,2251,daily_saod
+44,u-ed776,apd.pp,2252,daily_saod
+45,u-ed776,apd.pp,2253,daily_saod
+46,u-ed776,apd.pp,2254,daily_saod
+47,u-ed776,apd.pp,34106,oc_aitsol
+48,u-ed776,apd.pp,34110,oc_accsol
+49,u-ed776,apd.pp,34116,oc_coasol
+50,u-ed776,apd.pp,34121,oc_aitins
+51,u-ed776,apd.pp,2530,3D_ext
